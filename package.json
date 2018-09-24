@@ -1,0 +1,29 @@
+{
+  "name": "game-of-friends",
+  "version": "1.0.0",
+  "description": "Find out how well your friends know you.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/DarkPotatoKing/game-of-friends.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/DarkPotatoKing/game-of-friends/issues"
+  },
+  "homepage": "https://gitlab.com/DarkPotatoKing/game-of-friends#README",
+  "devDependencies": {
+    "nodemon": "^1.18.3"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "mongoose": "^5.2.5"
+  }
+}
