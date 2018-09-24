@@ -61,7 +61,7 @@ function insertToRedis(list,onRep){
 
     tempList = [];
 
-    // console.log("rawr");
+    console.log("rawr");
 
     nowDate = new Date;
     nowDate = nowDate.toLocaleDateString();
@@ -189,7 +189,7 @@ function printRawr(text){
 async function igcrawl(){
 
     const browser = await puppeteer.launch({
-      headless: false,
+      headless: true,
       args: ['--disable-notifications','--no-sandbox', '--disable-setuid-sandbox']
     });
 
