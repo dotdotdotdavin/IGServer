@@ -62,6 +62,12 @@ function insertToRedis(list,onRep){
     tempList = [];
 
     console.log("rawr");
+    if(onRep){
+        console.log("graphql");
+    }
+    else{
+        console.log("Start");
+    }
 
     nowDate = new Date;
     nowDate = nowDate.toLocaleDateString();
@@ -86,7 +92,7 @@ function insertToRedis(list,onRep){
                     else{
                         extra.saddAsync("archive",a[x][1]).then(function(rep){
                             if(rep){
-                                console.log(a[x]);
+
                                 extra.hmsetAsync(a[x][1],
                                             "id",a[x][0],
                                             "name",a[x][1],
@@ -333,7 +339,13 @@ async function igcrawl(){
     });
 
     if(games_list.length > 0){
+        console.log("Eval");
         insertToRedis(games_list,false);
+    }
+
+    else{
+        console.log("Closing");
+        closeDown();
     }
 
 
@@ -347,6 +359,7 @@ function scrollDown(){
 }
 
 function closeDown(){
+    console.log("Closing");
     ext_brow.close();
     process.exit(0);
 }
