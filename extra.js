@@ -1,9 +1,9 @@
 var redis = require('redis');
 const {promisify} = require('util');
 client = redis.createClient(
-    {host:"redis-18397.c14.us-east-1-3.ec2.cloud.redislabs.com",
-    port:18397,
-    password:"aYI9ekj3wKX73ZlqkmJr6hv7xhTexyR7"
+    {host:process.env.IGREDISHOST,
+    port:process.env.IGREDISPORT,
+    password:process.env.IGREDISPASS
 });
 const getAsync = promisify(client.get).bind(client);
 const hmsetAsync = promisify(client.hmset).bind(client);
