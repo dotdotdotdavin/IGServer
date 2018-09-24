@@ -114,8 +114,8 @@ app.get('/getgame', (req, res) => {
     }
 });
 
-app.listen(5001, '0.0.0.0', function() {
-    console.log('Listening to port:  ' + 5001);
+app.listen(port, '0.0.0.0', function() {
+    console.log('Listening to port:  ' + port);
 });
 
 console.log('todo list RESTful API server started on: ' + port);
