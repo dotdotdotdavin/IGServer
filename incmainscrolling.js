@@ -1,6 +1,6 @@
 const login_page_fb = 'https://facebook.com/login/';
 const page_fb = 'https://facebook.com/';
-const instant_games_fb = 'https://facebook.com/instantgames/';
+const instant_games_fb = 'https://facebook.com/instantgames/';``
 const EMAIL_SELECTOR = '#email';
 const PASSWORD_SELECTOR = '#pass';
 const LOG_IN_BUTTON = '#loginbutton';
@@ -76,12 +76,16 @@ function insertToRedis(list,onRep){
             game_key = nowDate +":"+a[x][1];
             if(a[x][1] != undefined && a[x][1] != null ){
 
-                if(a[x][3] == undefined || a[x][3]== null){
+                if(a[x][3] == undefined || a[x][3]== null || a[x][3] = ""){
                     a[x][3] = "UNKNOWN";
                 }
 
-                if(a[x][2] == undefined || a[x][2] == null){
+                if(a[x][2] == undefined || a[x][2] == null || a[x][2] = ""){
                     a[x][2] = "UNKNOWN";
+                }
+
+                if(a[x][0] == undefined || a[x][0] == null || a[x][0] = ""){
+                    a[x][0] = "";
                 }
                 extra.existsAsync(a[x][1]).then(function(res){
                     if(res == 1){
@@ -115,7 +119,7 @@ function insertToRedis(list,onRep){
         }
 
 
-        if(ra <= 10){
+        if(ra <= 15){
             ra++;
             scrollDown();
         }

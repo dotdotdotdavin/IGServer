@@ -1,5 +1,5 @@
 var extra = require('./extra');
-var client2 = extra.client2;
+var client2 = extra.client;
 // var client = extra.client;
 var async = require('async');
 var dump = require('redis-dump');
@@ -61,9 +61,9 @@ client.on('error',function(err){
 //     }
 // });
 
-// extra.hgetallAsync("Solitaire").then(function(res){
-//     console.log(res);
-// });
+extra.hgetallAsync("How Well Do You Know Me?").then(function(res){
+    console.log(res);
+});
 
 // extra.smembersAsync("archive").then(function(res){
 //
@@ -78,14 +78,14 @@ client.on('error',function(err){
 //
 // });
 
-extra.smembersAsync("archive").then(function(res){
+// extra.smembersAsync("archive").then(function(res){
+// //
+//     for(var i in res){
+//         console.log(res[i]);
+//            extra.hgetAsync("2018-9-21",res[i]).then(function(ress){
+//                    console.log(ress);
 //
-    for(var i in res){
-        console.log(res[i]);
-           extra.hgetAsync("2018-9-21",res[i]).then(function(ress){
-                   console.log(ress);
-
-           });
-       }
-//
-});
+//            });
+//        }
+// //
+// });
