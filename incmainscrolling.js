@@ -76,15 +76,15 @@ function insertToRedis(list,onRep){
             game_key = nowDate +":"+a[x][1];
             if(a[x][1] != undefined && a[x][1] != null ){
 
-                if(a[x][3] == undefined || a[x][3]== null || a[x][3] = ""){
+                if(a[x][3] == undefined || a[x][3]== null || a[x][3] == ""){
                     a[x][3] = "UNKNOWN";
                 }
 
-                if(a[x][2] == undefined || a[x][2] == null || a[x][2] = ""){
+                if(a[x][2] == undefined || a[x][2] == null || a[x][2] == ""){
                     a[x][2] = "UNKNOWN";
                 }
 
-                if(a[x][0] == undefined || a[x][0] == null || a[x][0] = ""){
+                if(a[x][0] == undefined || a[x][0] == null || a[x][0] == ""){
                     a[x][0] = "";
                 }
                 extra.existsAsync(a[x][1]).then(function(res){
