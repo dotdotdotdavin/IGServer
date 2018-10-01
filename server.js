@@ -98,7 +98,8 @@ app.get('/getgame', (req, res) => {
                 "developer":ress.developer,
                 "category":ress.category,
                 "first_date":ress.first_date,
-                "date_count":values
+                "date_count":values,
+                "count":ress.count
             }
 
             return data;

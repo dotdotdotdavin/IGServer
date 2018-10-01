@@ -61,9 +61,13 @@ client.on('error',function(err){
 //     }
 // });
 
-extra.hgetallAsync("How Well Do You Know Me?").then(function(res){
+extra.hgetallAsync("Princess Dab").then(function(res){
     console.log(res);
 });
+
+// extra.hgetallAsync("2018-9-30").then(function(res){
+//     console.log(res);
+// });
 
 // extra.smembersAsync("archive").then(function(res){
 //
