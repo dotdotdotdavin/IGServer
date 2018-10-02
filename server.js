@@ -39,7 +39,7 @@ app.get('/gettable', (req, res) => {
   let game = req.query.game;
 
     console.log("heyyy");
-    rawr =extra.smembersAsync("archive").then(function(ress){
+    rawr = extra.smembersAsync("archive").then(function(ress){
         return ress;
     },res).then(function(ress){
         list2 = []
@@ -99,6 +99,7 @@ app.get('/getgame', (req, res) => {
                 "category":ress.category,
                 "first_date":ress.first_date,
                 "count":ress.count,
+                "last_week_count":ress.count,
                 "date_count":values
             }
 
@@ -133,8 +134,8 @@ function getDates(name,fdate,many){
 
     if(many == -1){
         while(currentDate >= stop_date){
-            dateArray.push(new Date(stop_date).toLocaleDateString());
-            stop_date = stop_date.addDays(1);
+            dateArray.unshift(new Date(currentDate).toLocaleDateString());
+            currentDate = currentDate.addDays(-1);
         }
     }
 
@@ -142,8 +143,8 @@ function getDates(name,fdate,many){
         ctr = 0;
         while(ctr < many && currentDate >= stop_date){
             ctr++;
-            dateArray.push(new Date(stop_date).toLocaleDateString());
-            stop_date = stop_date.addDays(1);
+            dateArray.unshift(new Date(currentDate).toLocaleDateString());
+            currentDate = currentDate.addDays(-1);
         }
     }
 
