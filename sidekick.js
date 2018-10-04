@@ -61,9 +61,12 @@ client.on('error',function(err){
 //     }
 // });
 
-extra.hgetallAsync("Princess Dab").then(function(res){
+extra.hgetAsync("2018-9-25","Checkers").then(function(res){
     console.log(res);
+    process.exit(0);
 });
+
+
 
 // extra.hgetallAsync("2018-9-30").then(function(res){
 //     console.log(res);

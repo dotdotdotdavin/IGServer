@@ -1,21 +1,30 @@
 const extra= require("./extra");
 
+var count = 0;
+var count2 = 0;
 
 function getGameDates(){
 
     lw_date = getLastWeekDate();
 
-    listDates = extra.smembersAsync("archive").then(function(ress){
+    listDates= extra.smembersAsync("archive").then(function(ress){
         return ress;
 
     }).then(function(ress){
         list = []
         for(x = 0; x<ress.length; x++){
-            retrieveAndInsert(ress[x],lw_date);
+            if(ress[x] && ress[x] != undefined){
+
+                list.push(retrieveAndInsert(ress[x],lw_date));
+            }
         }
 
-
+        return Promise.all(list).then(function(value){
+            process.exit(0);
+        });
     },lw_date);
+
+
 
 
 }
@@ -41,7 +50,8 @@ function getWeeklyRating(listDates){
 
 function retrieveAndInsert(title,lw_date){
 
-    extra.hgetallAsync(title).then(function(data){
+
+    return extra.hgetallAsync(title).then(function(data){
 
 
         if(data.name != undefined && data){
@@ -50,16 +60,31 @@ function retrieveAndInsert(title,lw_date){
              lw_date = data.first_date;
          }
 
-
-         extra.hgetAsync(lw_date,data.name).then(function(reply){
+         count++;
+         console.log(data.name);
+         return extra.hgetAsync(lw_date,data.name).then(function(reply){
              if(reply){
-                 console.log(data.name);
-                 extra.hsetAsync(data.name,"last_week_count",reply).then(function(result){
-                     console.log(result);
+                count--;
+                return extra.hsetAsync(data.name,"last_week_count",reply).then(function(result){
+
+
+
+
+
+                     return count;
                  });
+             }
+
+             else{
+                 count--;
+                 return false;
              }
          },lw_date,data);
 
+        }
+
+        else {
+            return false;
         }
 
 
