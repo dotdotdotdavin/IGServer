@@ -119,7 +119,7 @@ function insertToRedis(list,onRep){
         }
 
 
-        if(ra <= 20){
+        if(ra <= 25){
             ra++;
             scrollDown();
         }
