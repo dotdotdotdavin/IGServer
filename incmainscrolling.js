@@ -107,12 +107,19 @@ function insertToRedis(list,onRep){
                         });
                     }
                 });
+                extra.hexistsAsync(nowDate,a[x][1]).then(function(res){
+                    if(res == 1){
 
-                extra.hsetAsync(nowDate,a[x][1],a[x][4]).then(function(res){
+                    }
 
-                });
-                extra.hsetAsync(a[x][1],"count",a[x][4]).then(function(res){
+                    else{
+                        extra.hsetAsync(nowDate,a[x][1],a[x][4]).then(function(res){
 
+                        });
+                        extra.hsetAsync(a[x][1],"count",a[x][4]).then(function(res){
+
+                        });
+                    }
                 });
 
             }

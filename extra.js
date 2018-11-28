@@ -19,6 +19,7 @@ const hgetAsync = promisify(client.hget).bind(client);
 const saddAsync = promisify(client.sadd).bind(client);
 const hsetnxAsync = promisify(client.hsetnx).bind(client);
 const existsAsync = promisify(client.exists).bind(client);
+const hexistsAsync = promisify(client.hexists).bind(client);
 const smembersAsync = promisify(client.smembers).bind(client);
 const keysAsync = promisify(client.keys).bind(client);
 const hlenAsync = promisify(client.hlen).bind(client);
@@ -33,6 +34,7 @@ module.exports = {
     saddAsync: saddAsync,
     hsetnxAsync: hsetnxAsync,
     existsAsync: existsAsync,
+    hexistsAsync: hexistsAsync,
     hgetallAsync: hgetallAsync,
     hgetAsync: hgetAsync,
     hsetAsync: hsetAsync,
