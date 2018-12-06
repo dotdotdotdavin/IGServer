@@ -109,10 +109,11 @@ function insertToRedis(list,onRep){
                 });
                 extra.hexistsAsync(nowDate,a[x][1]).then(function(res){
                     if(res == 1){
-
+                        console.log(a[x][1]);
                     }
 
                     else{
+                        console.log("DNE");
                         extra.hsetAsync(nowDate,a[x][1],a[x][4]).then(function(res){
 
                         });
