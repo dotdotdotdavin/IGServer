@@ -77,56 +77,60 @@ app.get('/getgame', (req, res) => {
     if(name){
         let ex = extra.existsAsync(name).then(function(res){
                     return res;
+                }).then(function(res2){
+                    if(res2 == 1){
+                        let ind = name;
+                    }
+                    else {
+                        let ind = id;
+                    }
+
+
+
+
+                extra.hgetallAsync(ind).then(function(ress){
+                    console.log(ress);
+                    list = []
+                    theDates = getDates(name,ress.first_date,days);
+                    for(x = 0; x<theDates.length; x++){
+                        curr = theDates[x];
+                        let search = curr >= "2019-1-30" ? id : name;
+
+                        list.push(extra.hgetAsync(curr,search).then(function(repl){
+
+                                return {"curr":repl};
+                            })
+                        );
+                    }
+
+                return Promise.all(list).then(function(values){
+                    for(x = 0; x<theDates.length; x++){
+                        buff = values[x].curr
+                        values[x] = {[theDates[x]]:buff};
+                    }
+
+                    data = {
+                        "id":ress.id,
+                        "title":ress.name,
+                        "developer":ress.developer,
+                        "category":ress.category,
+                        "first_date":ress.first_date,
+                        "count":ress.count,
+                        "last_week_count":ress.count,
+                        "date_count":values
+                    }
+
+                    return data;
+                },ress);
+
+            }).then(function(resss){
+
+                return res.json({
+                  msg: "These are to results for ",
+                  data: resss
                 });
-        if(ex == 1){
-            let ind = name;
-        }
-        else {
-            let ind = id;
-        }
-
-
-        extra.hgetallAsync(ind).then(function(ress){
-            list = []
-            theDates = getDates(name,ress.first_date,days);
-            for(x = 0; x<theDates.length; x++){
-                curr = theDates[x];
-                let search = curr >= "2019-1-30" ? id : name;
-
-                list.push(extra.hgetAsync(curr,search).then(function(repl){
-
-                        return {"curr":repl};
-                    })
-                );
-            }
-
-        return Promise.all(list).then(function(values){
-            for(x = 0; x<theDates.length; x++){
-                buff = values[x].curr
-                values[x] = {[theDates[x]]:buff};
-            }
-
-            data = {
-                "id":ress.id,
-                "title":ress.name,
-                "developer":ress.developer,
-                "category":ress.category,
-                "first_date":ress.first_date,
-                "count":ress.count,
-                "last_week_count":ress.count,
-                "date_count":values
-            }
-
-            return data;
-        },ress);
-
-    }).then(function(resss){
-
-        return res.json({
-          msg: "These are to results for ",
-          data: resss
+            },res,name);
         });
-    },res,name);
     }
 });
 
