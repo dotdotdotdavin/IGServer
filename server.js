@@ -75,7 +75,18 @@ app.get('/getgame', (req, res) => {
     let id = req.query.id;
     days = parseInt(days);
     if(name){
-        extra.hgetallAsync(name).then(function(ress){
+        let ex = extra.existsAsync(name).then(function(res){
+                    return res;
+                });
+        if(ex == 1){
+            let ind = name;
+        }
+        else {
+            let ind = id;
+        }
+
+
+        extra.hgetallAsync(ind).then(function(ress){
             list = []
             theDates = getDates(name,ress.first_date,days);
             for(x = 0; x<theDates.length; x++){
