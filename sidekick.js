@@ -52,20 +52,20 @@ client.on('error',function(err){
 //
 // });
 
-// extra.hgetallAsync("2018-9-20").then(function(res){
-//     // console.log(res);
-//     for(var i in res){
-//         extra.hsetnxAsync2("2018-9-20",i,res[i]).then(function(res){
-//
-//         });
-//     }
-// });
-
-extra.hgetAsync("2018-9-25","Checkers").then(function(res){
+extra.hgetallAsync("2019-1-29").then(function(res){
     console.log(res);
-    process.exit(0);
+//     // for(var i in res){
+//     //     extra.hsetnxAsync2("2018-9-20",i,res[i]).then(function(res){
+//     //
+//     //     });
+//     // }
 });
 
+//
+// extra.delAsync("2019-1-30").then(function(res){
+    // console.log(res);
+    // process.exit(0);
+// });
 
 
 // extra.hgetallAsync("2018-9-30").then(function(res){

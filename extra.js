@@ -12,6 +12,7 @@ client = redis.createClient(
 
 });
 const getAsync = promisify(client.get).bind(client);
+const delAsync = promisify(client.del).bind(client);
 const hmsetAsync = promisify(client.hmset).bind(client);
 const hsetAsync = promisify(client.hset).bind(client);
 const hgetallAsync = promisify(client.hgetall).bind(client);
@@ -23,6 +24,7 @@ const hexistsAsync = promisify(client.hexists).bind(client);
 const smembersAsync = promisify(client.smembers).bind(client);
 const keysAsync = promisify(client.keys).bind(client);
 const hlenAsync = promisify(client.hlen).bind(client);
+const scanAsync = promisify(client.scan).bind(client);
 
 
 module.exports = {
@@ -39,5 +41,7 @@ module.exports = {
     hgetAsync: hgetAsync,
     hsetAsync: hsetAsync,
     keysAsync: keysAsync,
-    hlenAsync: hlenAsync
+    hlenAsync: hlenAsync,
+    scanAsync: scanAsync,
+    delAsync: delAsync
 }

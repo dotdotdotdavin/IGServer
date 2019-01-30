@@ -39,7 +39,7 @@ app.get('/gettable', (req, res) => {
   let game = req.query.game;
 
     console.log("heyyy");
-    rawr = extra.smembersAsync("archive").then(function(ress){
+    rawr = extra.smembersAsync("archive_id").then(function(ress){
         return ress;
     },res).then(function(ress){
         list2 = []
@@ -72,6 +72,7 @@ app.get('/gettable', (req, res) => {
 app.get('/getgame', (req, res) => {
     let name = req.query.name;
     let days = req.query.days;
+    let id = req.query.id;
     days = parseInt(days);
     if(name){
         extra.hgetallAsync(name).then(function(ress){
@@ -79,7 +80,9 @@ app.get('/getgame', (req, res) => {
             theDates = getDates(name,ress.first_date,days);
             for(x = 0; x<theDates.length; x++){
                 curr = theDates[x];
-                list.push(extra.hgetAsync(curr,name).then(function(repl){
+                let search = curr >= "2019-1-30" ? id : name;
+
+                list.push(extra.hgetAsync(curr,search).then(function(repl){
 
                         return {"curr":repl};
                     })
