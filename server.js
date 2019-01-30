@@ -73,16 +73,17 @@ app.get('/getgame', (req, res) => {
     let name = req.query.name;
     let days = req.query.days;
     let id = req.query.id;
+    // console.log("here");
     days = parseInt(days);
     if(name){
         let ex = extra.existsAsync(name).then(function(res1){
                     return res1;
                 }).then(function(res2){
                     if(res2 == 1){
-                        let ind = name;
+                        var ind = name;
                     }
                     else {
-                        let ind = id;
+                        var ind = id;
                     }
 
 
