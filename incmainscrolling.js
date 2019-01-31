@@ -231,7 +231,7 @@ async function igcrawl(){
 
     //Initiate browser
     const browser = await puppeteer.launch({
-      headless: false,
+      headless: true,
       args: ['--disable-notifications','--no-sandbox', '--disable-setuid-sandbox']
     });
 
