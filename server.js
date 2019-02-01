@@ -44,13 +44,34 @@ app.get('/gettable', (req, res) => {
     },res).then(function(ress){
         list2 = []
         list = [];
+        // for(x = 0; x<ress.length; x++){
+        //
+        //     list2.push(extra.hgetallAsync(ress[x]).then(function(repl){
+        //             return repl;
+        //         })
+        //     );
+        // }
+
         for(x = 0; x<ress.length; x++){
             list2.push(extra.hgetallAsync(ress[x]).then(function(repl){
-                    return repl;
-                })
-            );
-        }
+                    if(repl.name){
+                        return extra.existsAsync(repl.name).then(function(repl2){
+                            if(repl2){
+                                return extra.hgetallAsync(repl.name).then(function(repl3){
+                                    console.log("name");
+                                    return repl3;
+                                })
 
+                            }
+                            else {
+                                console.log("id");
+                                return repl;
+                            }
+                        });
+                    }
+                })
+            )
+        }
 
 
         return Promise.all(list2).then(function(values){
@@ -181,7 +202,7 @@ function getDates(name,fdate,many){
         dateArray = new Array();
     }
     currentDate = new Date();
-    
+
 
     if(many == -1){
         while(currentDate >= stop_date){
