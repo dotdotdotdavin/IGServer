@@ -58,12 +58,29 @@ app.get('/gettable', (req, res) => {
                         return extra.existsAsync(repl.name).then(function(repl2){
                             if(repl2){
                                 return extra.hgetallAsync(repl.name).then(function(repl3){
+                                    if(repl3.first_date && repl3.first_date.indexOf('/') !== -1){
+
+                                        let nowDate = repl3.first_date.split('/');
+                                        let nowDateTemp = nowDate[0];
+                                        nowDate[0] = nowDate[2];
+                                        nowDate[2] = nowDate[1];
+                                        nowDate[1] = nowDateTemp;
+                                        repl3.first_date = nowDate.join('-');
+                                    }
                                     // console.log("name");
                                     return repl3;
                                 })
 
                             }
                             else {
+                                if(repl.first_date && repl.first_date.indexOf('/') !== -1){
+                                    let nowDate = repl.first_date.split('/');
+                                    let nowDateTemp = nowDate[0];
+                                    nowDate[0] = nowDate[2];
+                                    nowDate[2] = nowDate[1];
+                                    nowDate[1] = nowDateTemp;
+                                    repl.first_date = nowDate.join('-');
+                                }
                                 // console.log("id");
                                 return repl;
                             }
