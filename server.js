@@ -58,13 +58,13 @@ app.get('/gettable', (req, res) => {
                         return extra.existsAsync(repl.name).then(function(repl2){
                             if(repl2){
                                 return extra.hgetallAsync(repl.name).then(function(repl3){
-                                    console.log("name");
+                                    // console.log("name");
                                     return repl3;
                                 })
 
                             }
                             else {
-                                console.log("id");
+                                // console.log("id");
                                 return repl;
                             }
                         });
