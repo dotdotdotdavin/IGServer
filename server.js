@@ -92,6 +92,7 @@ app.get('/getgame', (req, res) => {
                 return extra.hgetallAsync(ind).then(function(ress){
                     console.log(ress);
                     list = []
+
                     theDates = getDates(name,ress.first_date,days);
                     var curr;
                     var currDateTemp;
@@ -158,14 +159,29 @@ console.log('todo list RESTful API server started on: ' + port);
 
 function getDates(name,fdate,many){
 
-    fdate_array = fdate.split('/');
-    for(x=0; x<3;x++){
-        fdate_array[x]=parseInt(fdate_array[x]);
+    var fdate_array;
+    var dateArray;
+    var currentDate;
+
+    if(fdate.indexOf('/') !== -1){
+        fdate_array = fdate.split('/');
+        for(x=0; x<3;x++){
+            fdate_array[x]=parseInt(fdate_array[x]);
+        }
+        stop_date = new Date(fdate_array[2],fdate_array[0]-1,fdate_array[1] );
+        dateArray = new Array();
     }
 
-    stop_date = new Date(fdate_array[2],fdate_array[0]-1,fdate_array[1] );
-    dateArray = new Array();
+    else if (fdate.indexOf('-') !== -1){
+        fdate_array = fdate.split('-');
+        for(x=0; x<3;x++){
+            fdate_array[x]=parseInt(fdate_array[x]);
+        }
+        stop_date = new Date(fdate_array[0],fdate_array[1]-1,fdate_array[2] );
+        dateArray = new Array();
+    }
     currentDate = new Date();
+    
 
     if(many == -1){
         while(currentDate >= stop_date){
