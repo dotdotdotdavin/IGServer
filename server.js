@@ -93,12 +93,27 @@ app.get('/getgame', (req, res) => {
                     console.log(ress);
                     list = []
                     theDates = getDates(name,ress.first_date,days);
+                    var curr;
+                    var currDateTemp;
+                    var oldcurr;
                     for(x = 0; x<theDates.length; x++){
                         curr = theDates[x];
+                        oldcurr = curr;
+                        curr = curr.split('/');
+                        currDateTemp = curr[0];
+                        curr[0] = curr[2];
+                        curr[2] = curr[1];
+                        curr[1] = currDateTemp;
+                        curr = curr.join('-');
+                        // console.log(oldcurr + " "+curr+" PREE");
                         let search = curr >= "2019-1-30" ? id : name;
+                        currDateTemp = curr.split('-')
 
+                        currDateTemp = new Date(currDateTemp[0],currDateTemp[1]-1,currDateTemp[2]);
+
+                        curr = currDateTemp < new Date(2019,0,30) && currDateTemp >= new Date(2018,11,7) ? oldcurr : curr;
                         list.push(extra.hgetAsync(curr,search).then(function(repl){
-
+                                // console.log(repl);
                                 return {"curr":repl};
                             })
                         );
@@ -143,11 +158,12 @@ console.log('todo list RESTful API server started on: ' + port);
 
 function getDates(name,fdate,many){
 
-    fdate_array = fdate.split('-');
+    fdate_array = fdate.split('/');
     for(x=0; x<3;x++){
         fdate_array[x]=parseInt(fdate_array[x]);
     }
-    stop_date = new Date(fdate_array[0],fdate_array[1]-1,fdate_array[2]);
+
+    stop_date = new Date(fdate_array[2],fdate_array[0]-1,fdate_array[1] );
     dateArray = new Array();
     currentDate = new Date();
 
@@ -166,6 +182,7 @@ function getDates(name,fdate,many){
             currentDate = currentDate.addDays(-1);
         }
     }
+
 
     return dateArray;
 
