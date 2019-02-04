@@ -85,16 +85,20 @@ function insertToRedis(list,onRep,message){
 
     //new Locale date returns dd/mm/yy
     //need to change it to YY-MM-DD
-    nowDate = new Date;
-    nowDate = nowDate.toLocaleDateString();
-    nowDate = nowDate.split('/');
-    nowDateTemp = nowDate[0];
-    nowDate[0] = nowDate[2];
-    nowDate[2] = nowDate[1];
-    nowDate[1] = nowDateTemp;
-    nowDate = nowDate.join('-');
+    nowDate = new Date();
+    nowDate = dateTranslate(nowDate);
+
+    var promise_list = [];
 
     if(list.length > 0){
+
+
+        var theOld = new Date();
+        theOld.setDate(theOld.getDate() - 7);
+        theOld = dateTranslate(theOld);
+        var theMonth = new Date();
+        theMonth.setDate(theMonth.getDate() - 30);
+        theMonth = dateTranslate(theMonth);
 
         //Minor checking just in case
         for(let x = 0, a = list, llen = list.length;x<llen;x++){
@@ -102,47 +106,15 @@ function insertToRedis(list,onRep,message){
             // console.log(a[x]);
             if(a[x][1] != undefined && a[x][1] != null ){
 
-
-
                 // Now have a master list
-                extra.existsAsync(a[x][0]).then(function(res){
-                    if(res == 1){
+                promise_list.push(
+                    insertToArchive(a[x],nowDate)
+                );
 
-                    }
-                    else{
-                        extra.saddAsync("archive_id",a[x][0]).then(function(rep){
-                            if(rep){
-
-                                extra.hmsetAsync(a[x][0],
-                                            "id",a[x][0],
-                                            "name",a[x][1],
-                                            "developer",a[x][2],
-                                            "category",a[x][3],
-                                            "first_date",nowDate).then(function(res){
-
-                                            });
-                            }
-                        });
-                    }
-                });
-
-                // per Date table
-                extra.hexistsAsync(nowDate,a[x][0]).then(function(res){
-                    if(res == 1){
-
-                    }
-
-                    else{
-
-                        extra.hsetAsync(nowDate,a[x][0],a[x][4]).then(function(res){
-
-                        });
-                        extra.hsetAsync(a[x][0],"count",a[x][4]).then(function(res){
-
-                        });
-                    }
-                });
-
+                promise_list.push(
+                    // per Date table
+                    insertToHash(a[x],nowDate,theOld,theMonth)
+                );
 
             }
         }
@@ -309,6 +281,94 @@ function closeDown(){
     process.exit(0);
 }
 
+function dateTranslate(dateString){
+    let dateStringTemp = "";
+    dateString = dateString.toLocaleDateString();
+    dateString = dateString.split('/');
+    dateStringTemp = dateString[0];
+    dateString[0] = dateString[2];
+    dateString[2] = dateString[1];
+    dateString[1] = dateStringTemp;
+    dateString = dateString.join('-');
+    return dateString;
+}
+
+function insertToArchive(a,nowDate){
+    return extra.existsAsync(a[0]).then(function(res){
+        if(res == 1){
+
+        }
+        else{
+            return extra.saddAsync("archive_id",a[0]).then(function(rep){
+                if(rep){
+
+                    return extra.hmsetAsync(a[0],
+                                "id",a[0],
+                                "name",a[1],
+                                "developer",a[2],
+                                "category",a[3],
+                                "first_date",nowDate).then(function(res1){
+                                     return 1;
+                                });
+                }
+            });
+        }
+    });
+}
+
+function insertToHash(a,nowDate,theOld,theMonth){
+    return extra.hgetAsync(nowDate,a[0]).then(function(res){
+        if(res == a[4]){
+            // console.log("EQUAL");
+            return 1;
+        }
+        else{
+            // console.log("NOT EQUAL");
+            return extra.hsetAsync(nowDate,a[0],a[4]).then(function(res){
+                return extra.hsetAsync(a[0],"count",a[4]).then(function(res1){
+
+                    var curr = nowDate;
+
+                    var theOldArray = theOld.split('-')
+                    var theOldDate = new Date(theOldArray[0],theOldArray[1]-1,theOldArray[2]);
+                    var search = theOldDate  >= new Date(2019,0,30) ? a[0] : a[1];
+                    var curr2 = theOldDate < new Date(2019,0,30) && theOldDate >= new Date(2018,11,7) ? theOldDate.toLocaleDateString() : theOld;
+
+                    var theMonthArray = theMonth.split('-');
+                    var theMonthDate = new Date(theMonthArray[0],theMonthArray[1]-1,theMonthArray[2]);
+                    var theMonthSearch = theMonthDate >= new Date(2019,0,30) ? a[0] : a[1];
+                    var curr3 = theMonthDate < new Date(2019,0,30) && theMonthDate >= new Date(2018,11,7) ? theMonthDate.toLocaleDateString() : theMonth;
+
+                    return extra.hexistsAsync(curr2,search).then(function(res3){
+                        // console.log("Finding Week "+curr2);
+                        if(res3){
+                            return extra.hgetAsync(curr2,search).then(function(res4){
+                                return extra.hsetAsync(a[0],"last_week_count",res4);
+                            });
+                        }
+                        else {
+                            return null;
+                        }
+                    }).then(function(res5){
+                        // console.log("Finding Month");
+
+                        return extra.hexistsAsync(curr3,theMonthSearch).then(function(res5){
+                            if(res5){
+                                return extra.hgetAsync(curr3,theMonthSearch).then(function(res6){
+                                    return extra.hsetAsync(a[0],"last_month_count",res6);
+                                });
+                            }
+                            else {
+                                return null;
+                            }
+                        });
+                    });
+
+                });
+            });
+        }
+    });
+}
 
 
 //Start

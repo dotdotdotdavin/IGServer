@@ -17,47 +17,51 @@ client.on('error',function(err){
 
 
 
+function f(){
 
-extra.hgetallAsync("2018-12-6").then(function(res){
-    console.log(res);
-//     // for(var i in res){
-//     //     extra.hsetnxAsync2("2018-9-20",i,res[i]).then(function(res){
-//     //
-//     //     });
-//     // }
-});
+    extra.smembersAsync("archive_id").then(function(res){
+        // console.log(res);
+        var tempList = [];
 
-// extra.hgetallAsync("1/29/2019").then(function(res){
-//     console.log(res);
-// //     // for(var i in res){
-// //     //     extra.hsetnxAsync2("2018-9-20",i,res[i]).then(function(res){
-// //     //
-// //     //     });
-// //     // }
-// });
 
-// extra.saddAsync("archive_quiz_apps","474443516378085").then(function(res){
-//
-// });
-//
-// extra.saddAsync("archive_quiz_apps","455676461606571").then(function(res){
-//
-// });
-//
-// extra.saddAsync("archive_quiz_apps","2210323535904466").then(function(res){
-//
-// });
-//
-// extra.saddAsync("archive_quiz_apps","709002776145083").then(function(res){
-//
-// });
-//
-// extra.saddAsync("archive_quiz_apps","492432114586553").then(function(res){
-//
-// });
-//
-// extra.saddAsync("archive_quiz_apps","440945256433897").then(function(res){
-//
-// });
+        for(let i = 0; i < res.length; i++){
+            tempList.push(
+                func1(res[i])
+            );
+        }
 
-//2210323535904466
+
+        return Promise.all(tempList).then(function(values){
+            console.log(values.length);
+            return values;
+        });
+    });
+
+}
+
+function func1(res){
+    // return extra.hgetAsync(res,"name").then(function(res1){
+    //     if(res1){
+    //         return extra.hgetallAsync(res1).then(function(res2){
+    //             if(res2){
+    //                 if(res == res2.id ){
+    //                     console.log(res2);
+    //                     return extra.hdelAsync(res2.id,"last_month_count")
+    //                 }
+    //                 else{
+    //                     // console.log("NOT EQUAL: "+res+" "+res2.id+ " "+res1)
+    //                 }
+    //             }
+    //             else{
+    //                 return 0;
+    //             }
+    //         });
+    //     }
+    //     else {
+    //         return 0;
+    //     }
+    // });
+    
+}
+
+// f();

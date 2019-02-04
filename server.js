@@ -54,37 +54,51 @@ app.get('/gettable', (req, res) => {
 
         for(x = 0; x<ress.length; x++){
             list2.push(extra.hgetallAsync(ress[x]).then(function(repl){
-                    if(repl.name){
-                        return extra.existsAsync(repl.name).then(function(repl2){
-                            if(repl2){
-                                return extra.hgetallAsync(repl.name).then(function(repl3){
-                                    if(repl3.first_date && repl3.first_date.indexOf('/') !== -1){
-
-                                        let nowDate = repl3.first_date.split('/');
+                    // if(repl && repl.name){
+                    //     return extra.existsAsync(repl.name).then(function(repl2){
+                    //         if(repl2){
+                    //             return extra.hgetallAsync(repl.name).then(function(repl3){
+                    //                 if(repl3.first_date && repl3.first_date.indexOf('/') !== -1){
+                    //
+                    //                     let nowDate = repl3.first_date.split('/');
+                    //                     let nowDateTemp = nowDate[0];
+                    //                     nowDate[0] = nowDate[2];
+                    //                     nowDate[2] = nowDate[1];
+                    //                     nowDate[1] = nowDateTemp;
+                    //                     repl3.first_date = nowDate.join('-');
+                    //                 }
+                    //                 // console.log("name");
+                    //                 return repl3;
+                    //             })
+                    //
+                    //         }
+                    //         else {
+                    //             if(repl.first_date && repl.first_date.indexOf('/') !== -1){
+                    //                 let nowDate = repl.first_date.split('/');
+                    //                 let nowDateTemp = nowDate[0];
+                    //                 nowDate[0] = nowDate[2];
+                    //                 nowDate[2] = nowDate[1];
+                    //                 nowDate[1] = nowDateTemp;
+                    //                 repl.first_date = nowDate.join('-');
+                    //             }
+                    //             // console.log("id");
+                    //             return repl;
+                    //         }
+                    //     });
+                    // }
+                    if(repl && repl.id && repl.name){
+                        if(repl.first_date && repl.first_date.indexOf('/') !== -1){
+                                        let nowDate = repl.first_date.split('/');
                                         let nowDateTemp = nowDate[0];
                                         nowDate[0] = nowDate[2];
                                         nowDate[2] = nowDate[1];
                                         nowDate[1] = nowDateTemp;
-                                        repl3.first_date = nowDate.join('-');
+                                        repl.first_date = nowDate.join('-');
                                     }
-                                    // console.log("name");
-                                    return repl3;
-                                })
-
-                            }
-                            else {
-                                if(repl.first_date && repl.first_date.indexOf('/') !== -1){
-                                    let nowDate = repl.first_date.split('/');
-                                    let nowDateTemp = nowDate[0];
-                                    nowDate[0] = nowDate[2];
-                                    nowDate[2] = nowDate[1];
-                                    nowDate[1] = nowDateTemp;
-                                    repl.first_date = nowDate.join('-');
-                                }
-                                // console.log("id");
-                                return repl;
-                            }
-                        });
+                        return repl;
+                    }
+                    else{
+                        return null;
                     }
                 })
             )
@@ -113,15 +127,15 @@ app.get('/getgame', (req, res) => {
     let id = req.query.id;
     // console.log("here");
     days = parseInt(days);
-    if(name){
-        let ex = extra.existsAsync(name).then(function(res1){
+    if(id && name){
+        let ex = extra.existsAsync(id).then(function(res1){
                     return res1;
                 }).then(function(res2){
                     if(res2 == 1){
-                        var ind = name;
+                        var ind = id;
                     }
                     else {
-                        var ind = id;
+                        var ind = name;
                     }
 
 
@@ -145,10 +159,10 @@ app.get('/getgame', (req, res) => {
                         curr[1] = currDateTemp;
                         curr = curr.join('-');
                         // console.log(oldcurr + " "+curr+" PREE");
-                        let search = curr >= "2019-1-30" ? id : name;
                         currDateTemp = curr.split('-')
 
                         currDateTemp = new Date(currDateTemp[0],currDateTemp[1]-1,currDateTemp[2]);
+                        let search = currDateTemp >= new Date(2019,0,30) ? id : name;
 
                         curr = currDateTemp < new Date(2019,0,30) && currDateTemp >= new Date(2018,11,7) ? oldcurr : curr;
                         list.push(extra.hgetAsync(curr,search).then(function(repl){
@@ -171,7 +185,8 @@ app.get('/getgame', (req, res) => {
                         "category":ress.category,
                         "first_date":ress.first_date,
                         "count":ress.count,
-                        "last_week_count":ress.count,
+                        "last_week_count":ress.last_week_count,
+                        "last_month_count":ress.last_month_count,
                         "date_count":values
                     }
 
