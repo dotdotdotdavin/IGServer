@@ -121,12 +121,14 @@ function insertToRedis(list,onRep,message){
 
 
         //25 pages limit i set, scroll down until 25 pages
-        if(ra <= 25){
+        console.log(list.length);
+        if(list.length >= 30 && ra <= 159){
             ra++;
             scrollDown();
         }
 
         else{
+            console.log(ra);
             closeDown();
         }
 
