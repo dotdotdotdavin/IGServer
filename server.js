@@ -205,43 +205,51 @@ app.get('/getgame', (req, res) => {
 
 app.patch('/settag', (req, res) => {
     console.log(req);
-    var get_id = req.params.id;
-    var get_tag = parseInt(req.params.tag);
+    var get_id = req.body.params.id;
+    var get_tag = parseInt(req.body.params.tag);
 
-
-    return extra.hsetAsync(get_id,'tag',get_tag).then(function(result){
-        if(result){
-            if(get_tag == 1){
-                return extra.saddAsync('archive_quiz_id',get_id).then(function(result1){
-                    return result1;
-                });
+    if(get_id && (get_tag <= 2 && get_tag >= 0 )){
+        return extra.hsetAsync(get_id,'tag',get_tag).then(function(result){
+            if(result){
+                if(get_tag == 1){
+                    return extra.saddAsync('archive_quiz_id',get_id).then(function(result1){
+                        return result1;
+                    });
+                }
+                else {
+                    return extra.sremAsync('archive_quiz_id',get_id).then(function(result1){
+                        return result1;
+                    });
+                }
             }
             else {
-                return extra.sremAsync('archive_quiz_id',get_id).then(function(result1){
-                    return result1;
+                return result;
+            }
+
+
+        }).then(function(result2){
+            if(result2){
+                return res.json({
+                    msg:"Saved",
+                    data:{id:get_id,tag:get_tag}
                 });
             }
-        }
-        else {
-            return result;
-        }
 
+            else{
+                return res.json({
+                    msg:"Not Saved",
+                    data:{id:get_id,tag:get_tag}
+                });
+            }
+        });
+    }
 
-    }).then(function(result2){
-        if(result2){
-            return res.json({
-                msg:"Saved",
-                data:{id:get_id,tag:get_tag}
-            });
-        }
-
-        else{
-            return res.json({
-                msg:"Not Saved",
-                data:{id:get_id,tag:get_tag}
-            });
-        }
-    });
+    else{
+        return res.json({
+            msg:"Not Saved",
+            data:{id:get_id,tag:get_tag}
+        });
+    }
 
 
 });
