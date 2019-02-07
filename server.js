@@ -205,8 +205,8 @@ app.get('/getgame', (req, res) => {
 
 app.patch('/settag', (req, res) => {
     console.log(req);
-    var get_id = req.query.id;
-    var get_tag = parseInt(req.query.tag);
+    var get_id = req.params.id;
+    var get_tag = parseInt(req.params.tag);
 
 
     return extra.hsetAsync(get_id,'tag',get_tag).then(function(result){
