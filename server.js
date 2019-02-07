@@ -204,7 +204,7 @@ app.get('/getgame', (req, res) => {
 });
 
 app.patch('/settag', (req, res) => {
-    
+
     var get_id = req.body.params.id;
     var get_tag = parseInt(req.body.params.tag);
 
@@ -217,7 +217,7 @@ app.patch('/settag', (req, res) => {
                     });
                 }
                 else {
-                    return extra.smembersAsync('archive_quiz_id',get_id).then(function(result1){
+                    return extra.sismembersAsync('archive_quiz_id',get_id).then(function(result1){
                         if (result1){
                             return extra.sremAsync('archive_quiz_id',get_id).then(function(result3){
                                 return result3;
