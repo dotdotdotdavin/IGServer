@@ -209,18 +209,27 @@ app.get('/getgame', (req, res) => {
     }
 });
 
-app.get('/settag', (req, res) => {
+app.patch('/settag', (req, res) => {
     var get_id = req.query.id;
     var get_tag = parseInt(req.query.tag);
 
 
     extra.hsetAsync(get_id,'tag',get_tag).then(function(result){
+        let ex_arr = [];
         if(get_tag == 1){
-            extra.saddAsync('archive_quiz_id',get_id);
+            ex_arr.push(extra.saddAsync('archive_quiz_id',get_id));
         }
         else {
-            extra.sremAsync('archive_quiz_id',get_id);
+            ex_arr.push(extra.sremAsync('archive_quiz_id',get_id));
         }
+        let res1 = Promise.all(ex_arr);
+        return res1;
+
+    }).then(function(result1){
+        return res.json({
+            msg:"Saved",
+            data:get_id
+        });
     });
 
 
