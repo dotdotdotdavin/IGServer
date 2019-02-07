@@ -215,21 +215,33 @@ app.patch('/settag', (req, res) => {
 
 
     return extra.hsetAsync(get_id,'tag',get_tag).then(function(result){
-        let ex_arr = [];
+
         if(get_tag == 1){
-            ex_arr.push(extra.saddAsync('archive_quiz_id',get_id));
+            return extra.saddAsync('archive_quiz_id',get_id).then(function(result1){
+                return result1;
+            });
         }
         else {
-            ex_arr.push(extra.sremAsync('archive_quiz_id',get_id));
+            return extra.sremAsync('archive_quiz_id',get_id).then(function(result1){
+                return result1;
+            });
         }
-        let res1 = Promise.all(ex_arr);
-        return res1;
 
-    }).then(function(result1){
-        return res.json({
-            msg:"Saved",
-            data:get_id
-        });
+
+    }).then(function(result2){
+        if(result2){
+            return res.json({
+                msg:"Saved",
+                data:[id:get_id,tag:get_tag]
+            });
+        }
+
+        else{
+            return res.json({
+                msg:"Not Saved",
+                data:[id:get_id,tag:get_tag]
+            });
+        }
     });
 
 

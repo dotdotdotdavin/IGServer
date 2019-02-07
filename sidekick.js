@@ -64,13 +64,8 @@ function func1(res){
 
 }
 
-extra.keysAsync("*").then(function(ress){
-    for(let i = 0; i<ress.length; i++){
-        if(ress[i].indexOf("archive") != -1 ||
-            ress[i].indexOf("quiz") != -1){
-                console.log(ress[i]);
-            }
-    }
+extra.smembersAsync("archive_quiz_id").then(function(ress){
+    console.log(ress);
 });
 
 // f();
