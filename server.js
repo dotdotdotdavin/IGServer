@@ -87,6 +87,10 @@ app.get('/gettable', (req, res) => {
                     //     });
                     // }
                     if(repl && repl.id && repl.name){
+                        if(repl.tag == undefined || repl.tag == 2){
+                            repl.tag = 2;
+                        }
+                        
                         if(repl.first_date && repl.first_date.indexOf('/') !== -1){
                                         let nowDate = repl.first_date.split('/');
                                         let nowDateTemp = nowDate[0];
@@ -94,6 +98,7 @@ app.get('/gettable', (req, res) => {
                                         nowDate[2] = nowDate[1];
                                         nowDate[1] = nowDateTemp;
                                         repl.first_date = nowDate.join('-');
+
                                     }
                         return repl;
                     }
@@ -204,9 +209,25 @@ app.get('/getgame', (req, res) => {
     }
 });
 
+app.get('/settag', (req, res) => {
+    var get_id = req.query.id;
+    var get_tag = parseInt(req.query.tag);
+
+    if(get_tag == 1){
+        extra.saddAsync('archive_quiz_id',get_id);
+    }
+    else {
+        extra.sremAsync('archive_quiz_id',get_id);
+    }
+    extra.hsetAsync(get_id,'tag',get_tag);
+
+
+});
+
 app.listen(port, '0.0.0.0', function() {
     console.log('Listening to port:  ' + port);
 });
+
 
 console.log('todo list RESTful API server started on: ' + port);
 

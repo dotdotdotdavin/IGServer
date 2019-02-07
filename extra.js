@@ -19,6 +19,7 @@ const hsetAsync = promisify(client.hset).bind(client);
 const hgetallAsync = promisify(client.hgetall).bind(client);
 const hgetAsync = promisify(client.hget).bind(client);
 const saddAsync = promisify(client.sadd).bind(client);
+const sremAsync = promisify(client.srem).bind(client);
 const hsetnxAsync = promisify(client.hsetnx).bind(client);
 const existsAsync = promisify(client.exists).bind(client);
 const hexistsAsync = promisify(client.hexists).bind(client);
@@ -28,6 +29,7 @@ const hlenAsync = promisify(client.hlen).bind(client);
 const scanAsync = promisify(client.scan).bind(client);
 
 
+
 module.exports = {
     redis:redis,
     client:client,
@@ -35,6 +37,7 @@ module.exports = {
     smembersAsync: smembersAsync,
     hmsetAsync: hmsetAsync,
     saddAsync: saddAsync,
+    sremAsync: sremAsync,
     hsetnxAsync: hsetnxAsync,
     existsAsync: existsAsync,
     hexistsAsync: hexistsAsync,

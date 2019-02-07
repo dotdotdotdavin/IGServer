@@ -61,7 +61,16 @@ function func1(res){
     //         return 0;
     //     }
     // });
-    
+
 }
+
+extra.keysAsync("*").then(function(ress){
+    for(let i = 0; i<ress.length; i++){
+        if(ress[i].indexOf("archive") != -1 ||
+            ress[i].indexOf("quiz") != -1){
+                console.log(ress[i]);
+            }
+    }
+});
 
 // f();
