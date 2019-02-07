@@ -204,7 +204,7 @@ app.get('/getgame', (req, res) => {
 });
 
 app.patch('/settag', (req, res) => {
-    console.log(res);
+    console.log(req);
     var get_id = req.query.id;
     var get_tag = parseInt(req.query.tag);
 
