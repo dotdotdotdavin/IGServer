@@ -217,7 +217,7 @@ app.patch('/settag', (req, res) => {
                     });
                 }
                 else {
-                    return extra.sismembersAsync('archive_quiz_id',get_id).then(function(result1){
+                    return extra.sismemberAsync('archive_quiz_id',get_id).then(function(result1){
                         if (result1){
                             return extra.sremAsync('archive_quiz_id',get_id).then(function(result3){
                                 return result3;
