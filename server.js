@@ -44,13 +44,7 @@ app.get('/gettable', (req, res) => {
     },res).then(function(ress){
         list2 = []
         list = [];
-        // for(x = 0; x<ress.length; x++){
-        //
-        //     list2.push(extra.hgetallAsync(ress[x]).then(function(repl){
-        //             return repl;
-        //         })
-        //     );
-        // }
+
 
         for(x = 0; x<ress.length; x++){
             list2.push(extra.hgetallAsync(ress[x]).then(function(repl){
@@ -210,21 +204,26 @@ app.get('/getgame', (req, res) => {
 });
 
 app.patch('/settag', (req, res) => {
+    console.log(res);
     var get_id = req.query.id;
     var get_tag = parseInt(req.query.tag);
 
 
     return extra.hsetAsync(get_id,'tag',get_tag).then(function(result){
-
-        if(get_tag == 1){
-            return extra.saddAsync('archive_quiz_id',get_id).then(function(result1){
-                return result1;
-            });
+        if(result){
+            if(get_tag == 1){
+                return extra.saddAsync('archive_quiz_id',get_id).then(function(result1){
+                    return result1;
+                });
+            }
+            else {
+                return extra.sremAsync('archive_quiz_id',get_id).then(function(result1){
+                    return result1;
+                });
+            }
         }
         else {
-            return extra.sremAsync('archive_quiz_id',get_id).then(function(result1){
-                return result1;
-            });
+            return result;
         }
 
 
