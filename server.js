@@ -214,7 +214,7 @@ app.patch('/settag', (req, res) => {
     var get_tag = parseInt(req.query.tag);
 
 
-    extra.hsetAsync(get_id,'tag',get_tag).then(function(result){
+    return extra.hsetAsync(get_id,'tag',get_tag).then(function(result){
         let ex_arr = [];
         if(get_tag == 1){
             ex_arr.push(extra.saddAsync('archive_quiz_id',get_id));
