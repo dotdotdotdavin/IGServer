@@ -232,14 +232,14 @@ app.patch('/settag', (req, res) => {
         if(result2){
             return res.json({
                 msg:"Saved",
-                data:[id:get_id,tag:get_tag]
+                data:{id:get_id,tag:get_tag}
             });
         }
 
         else{
             return res.json({
                 msg:"Not Saved",
-                data:[id:get_id,tag:get_tag]
+                data:{id:get_id,tag:get_tag}
             });
         }
     });
