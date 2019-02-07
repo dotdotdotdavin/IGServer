@@ -90,7 +90,7 @@ app.get('/gettable', (req, res) => {
                         if(repl.tag == undefined || repl.tag == 2){
                             repl.tag = 2;
                         }
-                        
+
                         if(repl.first_date && repl.first_date.indexOf('/') !== -1){
                                         let nowDate = repl.first_date.split('/');
                                         let nowDateTemp = nowDate[0];
@@ -213,13 +213,15 @@ app.get('/settag', (req, res) => {
     var get_id = req.query.id;
     var get_tag = parseInt(req.query.tag);
 
-    if(get_tag == 1){
-        extra.saddAsync('archive_quiz_id',get_id);
-    }
-    else {
-        extra.sremAsync('archive_quiz_id',get_id);
-    }
-    extra.hsetAsync(get_id,'tag',get_tag);
+
+    extra.hsetAsync(get_id,'tag',get_tag).then(function(result){
+        if(get_tag == 1){
+            extra.saddAsync('archive_quiz_id',get_id);
+        }
+        else {
+            extra.sremAsync('archive_quiz_id',get_id);
+        }
+    });
 
 
 });
