@@ -205,47 +205,63 @@ app.get('/getgame', (req, res) => {
 
 app.patch('/settag', (req, res) => {
 
-    var get_id = req.body.params.id;
-    var get_tag = parseInt(req.body.params.tag);
+    // var get_id = req.body.params.id;
+    // var get_tag = parseInt(req.body.params.tag);
+    let get_id = req.query.id;
+    let get_tag = req.query.tag;
 
     if(get_id && (get_tag <= 2 && get_tag >= 0 )){
-        return extra.hsetAsync(get_id,'tag',get_tag).then(function(result){
-            if(result){
+        return extra.hsetAsync(get_id,'tag',get_tag).then(function(rest){
+
+
                 if(get_tag == 1){
                     return extra.saddAsync('archive_quiz_id',get_id).then(function(result1){
-                        return result1;
+                        if(result1){
+                            return result1
+                        }
+
+                        else {
+                            return 5;
+                        }
+
                     });
                 }
                 else {
                     return extra.sismemberAsync('archive_quiz_id',get_id).then(function(result1){
+
                         if (result1){
                             return extra.sremAsync('archive_quiz_id',get_id).then(function(result3){
+
                                 return result3;
                             });
                         }
 
                         else{
+
                             return 1;
                         }
                     });
                 }
-            }
-            else {
-                return result;
-            }
 
 
         }).then(function(result2){
-            if(result2){
+
+            if(result2 == 1){
                 return res.json({
                     msg:"Saved",
                     data:{id:get_id,tag:get_tag}
                 });
             }
 
-            else{
+            else if (result2 == 0){
                 return res.json({
                     msg:"Not Saved",
+                    data:{id:get_id,tag:get_tag}
+                });
+            }
+            else if (result2 == 5){
+                return res.json({
+                    msg:"Already in the list, not Saved",
                     data:{id:get_id,tag:get_tag}
                 });
             }
@@ -254,7 +270,7 @@ app.patch('/settag', (req, res) => {
 
     else{
         return res.json({
-            msg:"Not Saved",
+            msg:"Invalid Params",
             data:{id:get_id,tag:get_tag}
         });
     }

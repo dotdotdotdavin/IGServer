@@ -67,5 +67,8 @@ function func1(res){
 extra.smembersAsync("archive_quiz_id").then(function(ress){
     console.log(ress);
 });
+extra.hgetallAsync("2210323535904466").then(function(ress){
+    console.log(ress);
+});
 
 // f();
