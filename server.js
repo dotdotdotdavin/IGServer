@@ -205,10 +205,10 @@ app.get('/getgame', (req, res) => {
 
 app.patch('/settag', (req, res) => {
 
-    // var get_id = req.body.params.id;
-    // var get_tag = parseInt(req.body.params.tag);
-    let get_id = req.query.id;
-    let get_tag = req.query.tag;
+    var get_id = req.body.params.id;
+    var get_tag = parseInt(req.body.params.tag);
+    // let get_id = req.query.id;
+    // let get_tag = req.query.tag;
 
     if(get_id && (get_tag <= 2 && get_tag >= 0 )){
         return extra.hsetAsync(get_id,'tag',get_tag).then(function(rest){
