@@ -298,7 +298,11 @@ function dateTranslate(dateString){
 function insertToArchive(a,nowDate){
     return extra.existsAsync(a[0]).then(function(res){
         if(res == 1){
-        
+            return extra.hsetAsync(a[0],
+                        "icon",a[5],
+                        ).then(function(res1){
+                             return 1;
+                        });
         }
         else{
             return extra.saddAsync("archive_id",a[0]).then(function(rep){

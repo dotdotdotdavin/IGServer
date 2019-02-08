@@ -186,6 +186,7 @@ app.get('/getgame', (req, res) => {
                         "count":ress.count,
                         "last_week_count":ress.last_week_count,
                         "last_month_count":ress.last_month_count,
+                        "icon":ress.icon,
                         "date_count":values
                     }
 
