@@ -122,7 +122,8 @@ function insertToRedis(list,onRep,message){
 
         //25 pages limit i set, scroll down until 25 pages
         console.log(list.length);
-        if(list.length >= 30 && ra <= 159){
+        console.log("at "+ra);
+        if(list.length >= 28 && ra <= 163){
             ra++;
             scrollDown();
         }
@@ -243,9 +244,18 @@ async function igcrawl(){
 
     //Spam and refresh instant games page
     //Instnt Games doesnt load the games sometimes
-    await page.goto(instant_games_fb,{waitUntil: 'networkidle2'});
-    await page.waitFor(2*1000);
-
+    // await page.waitFor(1*1000);
+    // await page.goto(login_page_fb);
+    // await page.click(EMAIL_SELECTOR);
+    // await page.keyboard.type("dummybunnywings@gmail.com");
+    // await page.click(PASSWORD_SELECTOR);
+    // await page.keyboard.type("13dummybunny");
+    // await page.click(LOG_IN_BUTTON);
+    // await page.waitFor(2*1000);
+   //Spam and refresh instant games page
+   //Instnt Games doesnt load the games sometimes
+   await page.goto(instant_games_fb,{waitUntil: 'networkidle2'});
+   await page.waitFor(2*1000);
 
     // headless click category
 

@@ -122,7 +122,7 @@ function insertToRedis(list,onRep,message){
 
         //25 pages limit i set, scroll down until 25 pages
         console.log(list.length);
-        if(list.length >= 30 && ra <= 159){
+        if(list.length >= 29 && ra <= 163){
             ra++;
             scrollDown();
         }
@@ -298,7 +298,7 @@ function dateTranslate(dateString){
 function insertToArchive(a,nowDate){
     return extra.existsAsync(a[0]).then(function(res){
         if(res == 1){
-        
+
         }
         else{
             return extra.saddAsync("archive_id",a[0]).then(function(rep){
