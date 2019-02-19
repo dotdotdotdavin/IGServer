@@ -11,6 +11,9 @@ client = redis.createClient(
     password:"aYI9ekj3wKX73ZlqkmJr6hv7xhTexyR7"
 
 });
+
+// redis-cli -u
+
 const getAsync = promisify(client.get).bind(client);
 const delAsync = promisify(client.del).bind(client);
 const hdelAsync = promisify(client.hdel).bind(client);

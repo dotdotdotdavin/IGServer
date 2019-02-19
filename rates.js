@@ -7,7 +7,7 @@ function getGameDates(){
 
     lw_date = getLastWeekDate();
 
-    listDates= extra.smembersAsync("archive").then(function(ress){
+    listDates= extra.smembersAsync("archive_id").then(function(ress){
         return ress;
 
     }).then(function(ress){

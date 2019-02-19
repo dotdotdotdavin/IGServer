@@ -64,11 +64,36 @@ function func1(res){
 
 }
 
-extra.smembersAsync("archive_quiz_id").then(function(ress){
-    console.log(ress);
-});
-extra.hgetallAsync("2210323535904466").then(function(ress){
-    console.log(ress);
-});
+// extra.delAsync("nt40161").then(function(ress){
+//     console.log(ress);
+// });
+//
+
+//DIDNT work out
+// https://en2.nametests.com/test/what-are-the-5-best-things-about-you/40128/?start=1#
+// extra.keysAsync("*").then(function(ress){
+//     for (let i = 0; i<ress.length; i++){
+//         if(ress[i].indexOf("nt >>>") == 0){
+//             // console.log(ress[i]);
+//
+//             extra.hgetallAsync(ress[i]).then(function(res){
+//                 var link = "https://"+res.locale+".nametests.com/test/";
+//                 // let tempName = res.title.split("?").join("");
+//                 let tempName = res.title.toLowerCase();
+//                 tempName = tempName.split(" ").join("-");
+//                 link = link + tempName +"/"+res.id+"/";
+//                 console.log(link);
+//                 // console.log(res);
+//             });
+//
+//         }
+//     }
+// });
+
+
 
 // f();
+
+extra.hgetallAsync("trend >>> 2019-2-19").then(function(res){
+    console.log(res);
+});
