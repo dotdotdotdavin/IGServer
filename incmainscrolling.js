@@ -74,9 +74,9 @@ function insertToRedis(list,onRep,message){
     tempList = [];
 
     //on Repeat, just to know if i still keep getting pages
-    console.log("rawr");
+    // console.log("rawr");
     if(onRep){
-        console.log("graphql");
+        // console.log("graphql");
     }
     else{
         console.log("Start");
@@ -121,14 +121,14 @@ function insertToRedis(list,onRep,message){
 
 
         //25 pages limit i set, scroll down until 25 pages
-        console.log(list.length);
-        console.log("at "+ra);
+        // console.log("at "+ra);
         if(list.length >= 29 && ra <= 165){
             ra++;
             scrollDown();
         }
 
         else{
+            console.log(list.length);
             console.log(ra);
             closeDown();
         }

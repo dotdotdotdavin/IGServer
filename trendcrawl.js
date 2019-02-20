@@ -14,7 +14,7 @@ const finishUP = [1,1,0];
 
 async function trendcrawl(){
     browser = await puppeteer.launch({
-      headless: false,
+      headless: true,
       args: ['--disable-notifications','--no-sandbox', '--disable-setuid-sandbox']
     });
 
