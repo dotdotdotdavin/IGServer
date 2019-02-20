@@ -241,7 +241,14 @@ async function igcrawl(){
      });
 
 
-
+     // await page.waitFor(1*1000);
+     // await page.goto(login_page_fb);
+     // await page.click(EMAIL_SELECTOR);
+     // await page.keyboard.type("dummybunnywings@gmail.com");
+     // await page.click(PASSWORD_SELECTOR);
+     // await page.keyboard.type("13dummybunny");
+     // await page.click(LOG_IN_BUTTON);
+     // await page.waitFor(2*1000);
     //Spam and refresh instant games page
     //Instnt Games doesnt load the games sometimes
     await page.goto(instant_games_fb,{waitUntil: 'networkidle2'});

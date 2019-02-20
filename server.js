@@ -206,7 +206,7 @@ app.get('/getgame', (req, res) => {
 
 app.get('/getday',(req,res) => {
     extra.hgetallAsync("trend >>> 2019-2-19").then(function(res1){
-        console.log(res1);
+        // console.log(res1);
 
         var obj = { 'NTtop':{},
             'NTmid': {},
