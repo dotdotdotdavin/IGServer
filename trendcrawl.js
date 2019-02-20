@@ -39,7 +39,7 @@ async function trendcrawl(){
 
         }
 
-        if (response.url().indexOf("instant-game-nt-multi-startpage-middle-language-json-english") != -1) {
+        else if (response.url().indexOf("instant-game-nt-multi-startpage-middle-language-json-english") != -1) {
            var midList = response.json().then(function(something){
 
                shipment = [];
@@ -51,7 +51,7 @@ async function trendcrawl(){
            });
         }
 
-        if (response.url().indexOf("quiz_recommend_list") != -1 &&
+        else if (response.url().indexOf("quiz_recommend_list") != -1 &&
             response.url().indexOf("api.wowwquiz") != -1) {
            var wowList = response.json().then(function(something){
 
@@ -66,34 +66,6 @@ async function trendcrawl(){
 
     });
 
-    page.on('response', async response => {
-        if (response.url().indexOf("instant-game-nt-multi-startpage-middle-language-json-english") != -1) {
-           var midList = response.json().then(function(something){
-
-               shipment = [];
-               // console.log(something);
-               collectDataNTmid(something).then(function(res){
-                  trendWOW(page);
-               });
-
-           });
-        }
-    });
-
-    page.on('response', async response => {
-        if (response.url().indexOf("quiz_recommend_list") != -1 &&
-            response.url().indexOf("api.wowwquiz") != -1) {
-           var wowList = response.json().then(function(something){
-
-               shipment = [];
-               // console.log(something);
-               collectDataWow(something).then(function(res){
-                   endTheCode(2,browser);
-               });
-
-           });
-        }
-    });
 
     trendNTtop(page);
     // trendNTmid(page1);
