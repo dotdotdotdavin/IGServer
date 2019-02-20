@@ -204,6 +204,44 @@ app.get('/getgame', (req, res) => {
     }
 });
 
+app.get('/getday',(req,res) => {
+    extra.hgetallAsync("trend >>> 2019-2-19").then(function(res1){
+        console.log(res1);
+
+        var obj = { 'NTtop':{},
+            'NTmid': {},
+            'wow': {},
+            'wow-list':{},
+            'nt-list':{}
+        };
+
+        var promise_list = [];
+
+        for(let i = 0; i < 24; i++){
+
+            let ia = makeQuizList(obj,i,'NTtop',res1);
+            let ib = makeQuizList(obj,i,'NTmid',res1);
+            let ic = makeQuizList(obj,i,'wow',res1);
+
+            promise_list.push(ia);
+            promise_list.push(ib);
+            promise_list.push(ic);
+
+
+        }
+        console.log("return");
+        return Promise.all(promise_list).then(function(res2){
+            return obj;
+        });
+    }).then(function(resss){
+
+        return res.json({
+          msg: "These are to results for ",
+          data: resss
+        });
+    },res);
+});
+
 app.patch('/settag', (req, res) => {
 
     var get_id = req.body.params.id;
@@ -331,4 +369,35 @@ function getDates(name,fdate,many){
 
     return dateArray;
 
+}
+
+function makeQuizList(obj,index,txt,res1){
+    let iHour = index+':00';
+    var promise_list = [];
+    if(res1[txt+" >>> "+iHour]){
+        obj[txt][iHour]=res1[txt+" >>> "+iHour].split('|||');
+        for(let i = 0; i < obj[txt][iHour].length; i++){
+            let new_txt = txt == 'wow' ? "wow" : "nt"
+            let a = retriveQuiz(obj,obj[txt][iHour][i],new_txt);
+
+            promise_list.push(a);
+        }
+
+        return Promise.all(promise_list).then(function(res2){
+            return true;
+        });
+    }
+
+    else{
+        return true;
+    }
+}
+
+function retriveQuiz(obj,id,txt){
+    if(!obj[txt+'-list'][id]){
+        return extra.hgetallAsync(txt+' >>> '+id).then(function(res){
+            obj[txt+'-list'][id] = res;
+            return true;
+        });
+    }
 }
