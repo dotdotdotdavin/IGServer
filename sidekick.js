@@ -71,29 +71,29 @@ function func1(res){
 
 //DIDNT work out
 // https://en2.nametests.com/test/what-are-the-5-best-things-about-you/40128/?start=1#
-// extra.keysAsync("*").then(function(ress){
-//     for (let i = 0; i<ress.length; i++){
-//         if(ress[i].indexOf("nt >>>") == 0){
-//             // console.log(ress[i]);
-//
-//             extra.hgetallAsync(ress[i]).then(function(res){
-//                 var link = "https://"+res.locale+".nametests.com/test/";
-//                 // let tempName = res.title.split("?").join("");
-//                 let tempName = res.title.toLowerCase();
-//                 tempName = tempName.split(" ").join("-");
-//                 link = link + tempName +"/"+res.id+"/";
-//                 console.log(link);
-//                 // console.log(res);
-//             });
-//
-//         }
-//     }
-// });
+extra.keysAsync("*").then(function(ress){
+    for (let i = 0; i<ress.length; i++){
+        if(ress[i].indexOf("trend >>>") == 0){
+            console.log(ress[i]);
+
+            // extra.hgetallAsync(ress[i]).then(function(res){
+            //     var link = "https://"+res.locale+".nametests.com/test/";
+            //     // let tempName = res.title.split("?").join("");
+            //     let tempName = res.title.toLowerCase();
+            //     tempName = tempName.split(" ").join("-");
+            //     link = link + tempName +"/"+res.id+"/";
+            //     console.log(link);
+            //     // console.log(res);
+            // });
+
+        }
+    }
+});
 
 
 
 // f();
 
-extra.hgetallAsync("trend >>> 2019-2-19").then(function(res){
-    console.log(res);
-});
+// extra.hgetallAsync("trend >>> 2019-2-20").then(function(res){
+//     console.log(res);
+// });

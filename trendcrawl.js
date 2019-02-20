@@ -9,7 +9,7 @@ const extra= require("./extra");
 const NTtop_API = "https://static.social-api.me/exports/buffer/json/instant-game-nt-multi-startpage-top-language-json-english.json";
 const NTmid_API = "https://static.social-api.me/exports/buffer/json/instant-game-nt-multi-startpage-middle-language-json-english.json";
 const wowAPI = "https://api.wowwquiz.com/v2/quiz_recommend_list.php?page=0&size=20&lang=en";
-const finishUP = [0,0,0];
+const finishUP = [1,1,0];
 
 
 async function trendcrawl(){
@@ -19,8 +19,7 @@ async function trendcrawl(){
     });
 
     const page = await browser.newPage();
-    const page1 = await browser.newPage();
-    const page2 = await browser.newPage();
+
 
     page.on('response', async response => {
       if(response.url().indexOf("instant-game-nt-multi-startpage-top-language-json-english") != -1){
@@ -31,7 +30,7 @@ async function trendcrawl(){
              shipment = [];
 
              collectDataNTtop(something).then(function(res){
-                 endTheCode(0,browser);
+                 trendNTmid(page);
              });
 
 
@@ -40,23 +39,48 @@ async function trendcrawl(){
 
         }
 
-    });
-
-    page1.on('response', async response => {
         if (response.url().indexOf("instant-game-nt-multi-startpage-middle-language-json-english") != -1) {
            var midList = response.json().then(function(something){
 
                shipment = [];
                // console.log(something);
                collectDataNTmid(something).then(function(res){
-                   endTheCode(1,browser);
+                  trendWOW(page);
+               });
+
+           });
+        }
+
+        if (response.url().indexOf("quiz_recommend_list") != -1 &&
+            response.url().indexOf("api.wowwquiz") != -1) {
+           var wowList = response.json().then(function(something){
+
+               shipment = [];
+               // console.log(something);
+               collectDataWow(something).then(function(res){
+                   endTheCode(2,browser);
+               });
+
+           });
+        }
+
+    });
+
+    page.on('response', async response => {
+        if (response.url().indexOf("instant-game-nt-multi-startpage-middle-language-json-english") != -1) {
+           var midList = response.json().then(function(something){
+
+               shipment = [];
+               // console.log(something);
+               collectDataNTmid(something).then(function(res){
+                  trendWOW(page);
                });
 
            });
         }
     });
 
-    page2.on('response', async response => {
+    page.on('response', async response => {
         if (response.url().indexOf("quiz_recommend_list") != -1 &&
             response.url().indexOf("api.wowwquiz") != -1) {
            var wowList = response.json().then(function(something){
@@ -72,8 +96,8 @@ async function trendcrawl(){
     });
 
     trendNTtop(page);
-    trendNTmid(page1);
-    trendWOW(page2);
+    // trendNTmid(page1);
+    // trendWOW(page2);
 
 }
 
