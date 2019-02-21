@@ -204,35 +204,43 @@ app.get('/getgame', (req, res) => {
     }
 });
 
-app.get('/getday',(req,res) => {
-    extra.hgetallAsync("trend >>> 2019-2-19").then(function(res1){
+app.get('/getdate',(req,res) => {
+
+    var date = req.query.day;
+
+    extra.hgetallAsync("trend >>> "+day).then(function(res1){
         // console.log(res1);
+        if(res1){
+            var obj = { 'NTtop':{},
+                'NTmid': {},
+                'wow': {},
+                'wow-list':{},
+                'nt-list':{}
+            };
 
-        var obj = { 'NTtop':{},
-            'NTmid': {},
-            'wow': {},
-            'wow-list':{},
-            'nt-list':{}
-        };
+            var promise_list = [];
 
-        var promise_list = [];
+            for(let i = 0; i < 24; i++){
 
-        for(let i = 0; i < 24; i++){
+                let ia = makeQuizList(obj,i,'NTtop',res1);
+                let ib = makeQuizList(obj,i,'NTmid',res1);
+                let ic = makeQuizList(obj,i,'wow',res1);
 
-            let ia = makeQuizList(obj,i,'NTtop',res1);
-            let ib = makeQuizList(obj,i,'NTmid',res1);
-            let ic = makeQuizList(obj,i,'wow',res1);
-
-            promise_list.push(ia);
-            promise_list.push(ib);
-            promise_list.push(ic);
+                promise_list.push(ia);
+                promise_list.push(ib);
+                promise_list.push(ic);
 
 
+            }
+            console.log("return");
+            return Promise.all(promise_list).then(function(res2){
+                return obj;
+            });
         }
-        console.log("return");
-        return Promise.all(promise_list).then(function(res2){
-            return obj;
-        });
+
+        else{
+            return {};
+        }
     }).then(function(resss){
 
         return res.json({
@@ -321,8 +329,185 @@ app.listen(port, '0.0.0.0', function() {
     console.log('Listening to port:  ' + port);
 });
 
+app.get('/getappearances', (req,res) => {
+    var new_id = req.query.id+"";
+    var new_txt = req.query.txt;
+
+    var obj_appear = [];
+    extra.hgetallAsync(new_txt+" >>> "+new_id).then(function(resss){
+        if(resss){
+
+            resss.appearList = {"wowAppear":[],
+            "NT-top-Appear":[],
+            "NT-mid-Appear":[]}
+            if(new_txt == "wow"){
+                return fetchAppearances(new_txt,resss,resss.last_seen,resss.reco_appearances,0,"");
+            }
+            else{
+                console.log(resss);
+                return fetchAppearances(new_txt,resss,resss['NT_top_last_seen'],parseInt(resss["NT_top_appearances"]),parseInt(resss["NT_mid_appearances"]),resss['NT_mid_last_seen']);
+            }
+        }
+        else{
+            return {};
+        }
+    }).then(function(resss){
+
+        return res.json({
+          msg: "These are to results for ",
+          data: resss
+        });
+    },res);;
+
+
+})
 
 console.log('todo list RESTful API server started on: ' + port);
+
+function fetchAppearances(txt,ress,rLastSeen, appear1, appear2,mLastSeen){
+
+    if(txt == 'wow'){
+        if(appear1 <= 0){
+            // console.log("end");
+            return ress;
+        }
+        else{
+
+            rLastSeen = rLastSeen.split('-');
+            let rLastTime = rLastSeen.pop();
+            rLastTime = rLastTime.split(':');
+            rLastTime = parseInt(rLastTime[0]);
+            rLastSeen = rLastSeen.join('-');
+            return extra.hgetallAsync("trend >>> "+rLastSeen).then(function(res1){
+                var tempList = {date:rLastSeen,hours:[]};
+                for(let i = rLastTime; i >= 0; i--){
+                    if(res1[txt+" >>> "+i+":00"] != undefined){
+                        let timeList = res1[txt+" >>> "+i+":00"].split("|||");
+                        if(timeList.includes(ress.id)){
+                            tempList.hours.push(i)
+                            appear1--;
+                        }
+
+                        if(appear1 == 0){
+                            break;
+                        }
+                    }
+                }
+
+                return tempList;
+            }).then(function(tempList){
+                if(tempList.hours.length > 0){
+                    ress.appearList.wowAppear.push(tempList);
+                }
+                if(appear1 != 0){
+                    rLastSeen = getDayLess(rLastSeen);
+                    return fetchAppearances(txt,ress,rLastSeen,appear1,appear2,mLastSeen);
+                }
+                else{
+                    return ress;
+                }
+
+            });
+
+        }
+    }
+
+    else{
+        if(appear1 <= 0 && appear2 <= 0){
+            // console.log("end");
+            return ress;
+        }
+
+        else if (appear1 > 0) {
+            rLastSeen = rLastSeen.split('-');
+            let rLastTime = rLastSeen.pop();
+            rLastTime = rLastTime.split(':');
+            rLastTime = parseInt(rLastTime[0]);
+            rLastSeen = rLastSeen.join('-');
+            return extra.hgetallAsync("trend >>> "+rLastSeen).then(function(res1){
+                var tempList = {date:rLastSeen,hours:[]};
+                for(let i = rLastTime; i >= 0; i--){
+                    if(res1["NTtop >>> "+i+":00"] != undefined){
+                        let timeList = res1["NTtop >>> "+i+":00"].split("|||");
+                        if(timeList.includes(ress.id)){
+                            tempList.hours.push(i)
+                            appear1--;
+                        }
+
+                        if(appear1 == 0){
+                            break;
+                        }
+                    }
+                }
+
+                return tempList;
+            }).then(function(tempList){
+                if(tempList.hours.length > 0){
+                    ress.appearList["NT-top-Appear"].push(tempList);
+                }
+
+                rLastSeen = getDayLess(rLastSeen);
+                return fetchAppearances(txt,ress,rLastSeen,appear1,appear2,mLastSeen);
+
+            });
+        }
+
+        else if (appear2 > 0) {
+            // console.log(ress);
+            mLastSeen = mLastSeen.split('-');
+            let mLastTime = mLastSeen.pop();
+            mLastTime = mLastTime.split(':');
+            mLastTime = parseInt(mLastTime[0]);
+            mLastSeen = mLastSeen.join('-');
+            return extra.hgetallAsync("trend >>> "+mLastSeen).then(function(res1){
+                var tempList = {date:mLastSeen,hours:[]};
+                for(let i = mLastTime; i >= 0; i--){
+                    if(res1["NTmid >>> "+i+":00"] != undefined){
+                        let timeList = res1["NTmid >>> "+i+":00"].split("|||");
+                        if(timeList.includes(ress.id)){
+                            tempList.hours.push(i)
+                            appear2--;
+                        }
+
+                        if(appear2 == 0){
+                            break;
+                        }
+                    }
+                }
+
+                return tempList;
+            }).then(function(tempList){
+                if(tempList.hours.length > 0){
+                    ress.appearList["NT-mid-Appear"].push(tempList);
+                }
+
+                mLastSeen = getDayLess(mLastSeen);
+                return fetchAppearances(txt,ress,rLastSeen,appear1,appear2,mLastSeen);
+
+            });
+        }
+    }
+
+
+}
+
+function getDayLess(last){
+    console.log(last);
+    last = last.split("-");
+    let new_last = new Date(last[0],last[1]-1,last[2]);
+    console.log(last);
+    new_last.setDate(new_last.getDate() - 1);
+    let new_last_string = new_last.toLocaleDateString();
+    new_last_string = new_last_string.split('/');
+    new_last = new_last_string[0];
+    new_last_string[0] = new_last_string[2];
+    new_last_string[2] = new_last_string[1];
+    new_last_string[1] = new_last;
+    new_last_string = new_last_string.join('-');
+    new_last_string= new_last_string+"-23:00";
+    return new_last_string;
+
+}
 
 function getDates(name,fdate,many){
 
