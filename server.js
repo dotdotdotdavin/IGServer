@@ -250,6 +250,39 @@ app.get('/getdate',(req,res) => {
     },res);
 });
 
+app.get('/getappearances', (req,res) => {
+    var new_id = req.query.id+"";
+    var new_txt = req.query.txt;
+
+    var obj_appear = [];
+    extra.hgetallAsync(new_txt+" >>> "+new_id).then(function(resss){
+        if(resss){
+
+            resss.appearList = {"wowAppear":[],
+            "NT-top-Appear":[],
+            "NT-mid-Appear":[]}
+            if(new_txt == "wow"){
+                return fetchAppearances(new_txt,resss,resss.last_seen,resss.reco_appearances,0,"");
+            }
+            else{
+                console.log(resss);
+                return fetchAppearances(new_txt,resss,resss['NT_top_last_seen'],parseInt(resss["NT_top_appearances"]),parseInt(resss["NT_mid_appearances"]),resss['NT_mid_last_seen']);
+            }
+        }
+        else{
+            return {};
+        }
+    }).then(function(resss){
+
+        return res.json({
+          msg: "These are to results for ",
+          data: resss
+        });
+    },res);;
+
+
+})
+
 app.patch('/settag', (req, res) => {
 
     var get_id = req.body.params.id;
@@ -329,38 +362,6 @@ app.listen(port, '0.0.0.0', function() {
     console.log('Listening to port:  ' + port);
 });
 
-app.get('/getappearances', (req,res) => {
-    var new_id = req.query.id+"";
-    var new_txt = req.query.txt;
-
-    var obj_appear = [];
-    extra.hgetallAsync(new_txt+" >>> "+new_id).then(function(resss){
-        if(resss){
-
-            resss.appearList = {"wowAppear":[],
-            "NT-top-Appear":[],
-            "NT-mid-Appear":[]}
-            if(new_txt == "wow"){
-                return fetchAppearances(new_txt,resss,resss.last_seen,resss.reco_appearances,0,"");
-            }
-            else{
-                console.log(resss);
-                return fetchAppearances(new_txt,resss,resss['NT_top_last_seen'],parseInt(resss["NT_top_appearances"]),parseInt(resss["NT_mid_appearances"]),resss['NT_mid_last_seen']);
-            }
-        }
-        else{
-            return {};
-        }
-    }).then(function(resss){
-
-        return res.json({
-          msg: "These are to results for ",
-          data: resss
-        });
-    },res);;
-
-
-})
 
 console.log('todo list RESTful API server started on: ' + port);
 
