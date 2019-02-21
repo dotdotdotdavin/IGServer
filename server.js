@@ -208,7 +208,7 @@ app.get('/getdate',(req,res) => {
 
     var date = req.query.date;
 
-    extra.hgetallAsync("trend >>> "+day).then(function(res1){
+    extra.hgetallAsync("trend >>> "+date).then(function(res1){
         // console.log(res1);
         if(res1){
             var obj = { 'NTtop':{},
