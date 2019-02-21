@@ -206,7 +206,7 @@ app.get('/getgame', (req, res) => {
 
 app.get('/getdate',(req,res) => {
 
-    var date = req.query.day;
+    var date = req.query.date;
 
     extra.hgetallAsync("trend >>> "+day).then(function(res1){
         // console.log(res1);
