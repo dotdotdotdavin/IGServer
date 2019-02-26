@@ -95,8 +95,8 @@ async function trendWOW(page2){
 
 async function collectDataNTtop(something){
     var aDate = new Date();
+    aDate = new Date(aDate.getUTCFullYear(),aDate.getUTCMonth(),aDate.getUTCDate(),aDate.getUTCHours());
     var nowDate = dateTranslate(aDate);
-
     var on_temp = [];
 
     var listInString="";
@@ -111,6 +111,7 @@ async function collectDataNTtop(something){
     return Promise.all(on_temp).then(function(val) {
         var trendHash = "trend >>> "+nowDate;
         var currDate = new Date();
+        console.log(aDate);
         var trendKey = "NTtop >>> "+aDate.getHours()+":"+"00";
         return extra.hsetAsync(trendHash,trendKey,listInString).then(function(res){
             console.log(trendHash);
@@ -123,6 +124,7 @@ async function collectDataNTtop(something){
 
 async function collectDataNTmid(something){
     var aDate = new Date();
+    aDate = new Date(aDate.getUTCFullYear(),aDate.getUTCMonth(),aDate.getUTCDate(),aDate.getUTCHours());
     var nowDate = dateTranslate(aDate);
 
     var on_temp = [];
@@ -151,6 +153,7 @@ async function collectDataNTmid(something){
 
 async function collectDataWow(something){
     var aDate = new Date();
+    aDate = new Date(aDate.getUTCFullYear(),aDate.getUTCMonth(),aDate.getUTCDate(),aDate.getUTCHours());
     var nowDate = dateTranslate(aDate);
 
     var on_temp = [];

@@ -94,7 +94,7 @@ client.on('error',function(err){
 
 // f();
 
-extra.hgetallAsync("trend >>> 2019-2-21").then(function(res){
+extra.hgetallAsync("trend >>> 2019-2-26").then(function(res){
     console.log(res);
 });
 //
