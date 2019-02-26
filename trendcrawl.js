@@ -104,7 +104,7 @@ async function collectDataNTtop(something){
     for(let x = 0; x < something.items.length; x++){
         listInString = x == 0 ? listInString + something.items[x].id : listInString + "|||" + something.items[x].id;
         let a = createARecordNT(something.items[x],"nt",nowDate,aDate,'top');
-
+        // a = true;
         on_temp.push(a);
     }
 
@@ -113,11 +113,42 @@ async function collectDataNTtop(something){
         var currDate = new Date();
         console.log(aDate);
         var trendKey = "NTtop >>> "+aDate.getHours()+":"+"00";
-        return extra.hsetAsync(trendHash,trendKey,listInString).then(function(res){
-            console.log(trendHash);
-            console.log(trendKey);
-            console.log("Done Data Top");
-            return res;
+        return extra.hexistsAsync(trendHash,trendKey).then(function(res){
+            if (res == 1){
+                return extra.hgetAsync(trendHash,trendKey).then(function(res1){
+                    var tempListString = listInString.split("|||");
+                    var tempres1 = res1.split("|||");
+                    console.log(tempres1.length);
+                    console.log(tempres1);
+                    for(let iii = 0; iii < tempListString.length; iii++){
+                        if( !tempres1.includes(tempListString[iii]) ){
+                            // console.log(tempres1);
+                            console.log("Not Exist");
+                            console.log(tempListString[iii]);
+                            tempres1.push(tempListString[iii]);
+                        }
+                    }
+                    console.log(tempres1.length);
+                    console.log(tempres1);
+                    tempres1 = tempres1.join('|||');
+
+                    return extra.hsetAsync(trendHash,trendKey,tempres1).then(function(res1){
+                        console.log(trendHash);
+                        console.log(trendKey);
+                        console.log("Update Done Data Top");
+                        return res1;
+                    });
+
+                });
+            }
+            else{
+                return extra.hsetAsync(trendHash,trendKey,listInString).then(function(res1){
+                    console.log(trendHash);
+                    console.log(trendKey);
+                    console.log("Done Data Top");
+                    return res1;
+                });
+            }
         });
     });
 }
@@ -142,11 +173,44 @@ async function collectDataNTmid(something){
         var trendHash = "trend >>> "+nowDate;
         var currDate = new Date();
         var trendKey = "NTmid >>> "+aDate.getHours()+":"+"00";
-        return extra.hsetAsync(trendHash,trendKey,listInString).then(function(res){
-            console.log(trendHash);
-            console.log(trendKey);
-            console.log("Done Data Mid");
-            return res;
+
+
+        return extra.hexistsAsync(trendHash,trendKey).then(function(res){
+            if (res == 1){
+                return extra.hgetAsync(trendHash,trendKey).then(function(res1){
+                    var tempListString = listInString.split("|||");
+                    var tempres1 = res1.split("|||");
+                    console.log(tempres1.length);
+                    console.log(tempres1);
+                    for(let iii = 0; iii < tempListString.length; iii++){
+                        if( !tempres1.includes(tempListString[iii]) ){
+                            // console.log(tempres1);
+                            console.log("Not Exist");
+                            console.log(tempListString[iii]);
+                            tempres1.push(tempListString[iii]);
+                        }
+                    }
+                    console.log(tempres1.length);
+                    console.log(tempres1);
+                    tempres1 = tempres1.join('|||');
+
+                    return extra.hsetAsync(trendHash,trendKey,tempres1).then(function(res1){
+                        console.log(trendHash);
+                        console.log(trendKey);
+                        console.log("Update Done Data Mid");
+                        return res1;
+                    });
+
+                });
+            }
+            else{
+                return extra.hsetAsync(trendHash,trendKey,listInString).then(function(res1){
+                    console.log(trendHash);
+                    console.log(trendKey);
+                    console.log("Done Data Mid");
+                    return res1;
+                });
+            }
         });
     });
 }
@@ -171,11 +235,42 @@ async function collectDataWow(something){
         var trendHash = "trend >>> "+nowDate;
         var currDate = new Date();
         var trendKey = "wow >>> "+aDate.getHours()+":"+"00";
-        return extra.hsetAsync(trendHash,trendKey,listInString).then(function(res){
-            console.log(trendHash);
-            console.log(trendKey);
-            console.log("Done Data wow");
-            return res;
+        return extra.hexistsAsync(trendHash,trendKey).then(function(res){
+            if (res == 1){
+                return extra.hgetAsync(trendHash,trendKey).then(function(res1){
+                    var tempListString = listInString.split("|||");
+                    var tempres1 = res1.split("|||");
+                    console.log(tempres1.length);
+                    console.log(tempres1);
+                    for(let iii = 0; iii < tempListString.length; iii++){
+                        if( !tempres1.includes(tempListString[iii]) ){
+                            // console.log(tempres1);
+                            console.log("Not Exist");
+                            console.log(tempListString[iii]);
+                            tempres1.push(tempListString[iii]);
+                        }
+                    }
+                    console.log(tempres1.length);
+                    console.log(tempres1);
+                    tempres1 = tempres1.join('|||');
+
+                    return extra.hsetAsync(trendHash,trendKey,tempres1).then(function(res1){
+                        console.log(trendHash);
+                        console.log(trendKey);
+                        console.log("Update Done Data wow");
+                        return res1;
+                    });
+
+                });
+            }
+            else{
+                return extra.hsetAsync(trendHash,trendKey,listInString).then(function(res1){
+                    console.log(trendHash);
+                    console.log(trendKey);
+                    console.log("Done Data wow");
+                    return res1;
+                });
+            }
         });
     });
 

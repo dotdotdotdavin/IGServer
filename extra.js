@@ -14,23 +14,23 @@ client = redis.createClient(
 
 // redis-cli -u
 
-const getAsync = promisify(client.get).bind(client);
 const delAsync = promisify(client.del).bind(client);
+const existsAsync = promisify(client.exists).bind(client);
+const getAsync = promisify(client.get).bind(client);
 const hdelAsync = promisify(client.hdel).bind(client);
+const hgetallAsync = promisify(client.hgetall).bind(client);
+const hexistsAsync = promisify(client.hexists).bind(client);
+const hgetAsync = promisify(client.hget).bind(client);
+const hlenAsync = promisify(client.hlen).bind(client);
 const hmsetAsync = promisify(client.hmset).bind(client);
 const hsetAsync = promisify(client.hset).bind(client);
-const hgetallAsync = promisify(client.hgetall).bind(client);
-const hgetAsync = promisify(client.hget).bind(client);
-const saddAsync = promisify(client.sadd).bind(client);
-const sremAsync = promisify(client.srem).bind(client);
 const hsetnxAsync = promisify(client.hsetnx).bind(client);
-const existsAsync = promisify(client.exists).bind(client);
-const hexistsAsync = promisify(client.hexists).bind(client);
-const smembersAsync = promisify(client.smembers).bind(client);
-const sismemberAsync = promisify(client.sismember).bind(client);
 const keysAsync = promisify(client.keys).bind(client);
-const hlenAsync = promisify(client.hlen).bind(client);
+const saddAsync = promisify(client.sadd).bind(client);
 const scanAsync = promisify(client.scan).bind(client);
+const sismemberAsync = promisify(client.sismember).bind(client);
+const smembersAsync = promisify(client.smembers).bind(client);
+const sremAsync = promisify(client.srem).bind(client);
 
 
 

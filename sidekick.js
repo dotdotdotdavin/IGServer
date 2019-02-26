@@ -94,7 +94,9 @@ client.on('error',function(err){
 
 // f();
 
-extra.hgetallAsync("trend >>> 2019-2-26").then(function(res){
+extra.hgetAsync("trend >>> 2019-2-26","NTtop >>> 10:00"
+// ,'40588|||40599|||40614|||40616|||40598'
+).then(function(res){
     console.log(res);
 });
 //
