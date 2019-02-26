@@ -205,10 +205,18 @@ app.get('/getgame', (req, res) => {
 });
 
 app.get('/getdate',(req,res) => {
-
+    var offset = parseInt(req.query.offset / -60);
+    // var offset = 8;
     var date = req.query.date;
-
-    extra.hgetallAsync("trend >>> "+date).then(function(res1){
+    var day = {};
+    var day_other = {};
+    var final_day = { 'NTtop':{},
+        'NTmid': {},
+        'wow': {},
+        'wow-list':{},
+        'nt-list':{}
+    };
+    return extra.hgetallAsync("trend >>> "+date).then(function(res1){
         // console.log(res1);
         if(res1){
             var obj = { 'NTtop':{},
@@ -232,17 +240,81 @@ app.get('/getdate',(req,res) => {
 
 
             }
-            console.log("return");
+            // console.log("return");
             return Promise.all(promise_list).then(function(res2){
+                day = obj;
                 return obj;
             });
         }
 
         else{
+            day = {};
             return {};
         }
-    }).then(function(resss){
+    })
+    .then(function(res2){
 
+        var date_next;
+        if(offset >= 0){
+            date_next = getDayLess(date);
+            date_next = date_next.split('-');
+            date_next.pop();
+            date_next = date_next.join('-');
+        }
+        else{
+            date_next = getDayMore(date);
+            date_next = date_next.split('-');
+            date_next.pop();
+            date_next = date_next.join('-');
+        }
+
+        return extra.hgetallAsync("trend >>> "+date_next).then(function(res1){
+           // console.log(res1);
+           if(res1){
+               var obj = { 'NTtop':{},
+                   'NTmid': {},
+                   'wow': {},
+                   'wow-list':{},
+                   'nt-list':{}
+               };
+
+               var promise_list = [];
+
+               for(let i = 0; i < 24; i++){
+
+                   let ia = makeQuizList(obj,i,'NTtop',res1);
+                   let ib = makeQuizList(obj,i,'NTmid',res1);
+                   let ic = makeQuizList(obj,i,'wow',res1);
+
+                   promise_list.push(ia);
+                   promise_list.push(ib);
+                   promise_list.push(ic);
+
+
+               }
+               // console.log("return");
+               return Promise.all(promise_list).then(function(res2){
+                   day_other = obj;
+                   return day_other;
+               });
+           }
+
+           else{
+               day_other = {};
+               return {};
+           }
+       });
+
+    })
+    .then(function(res3){
+        if(offset >= 0){
+            return adjustOnPlus(final_day,day,day_other,offset);
+        }
+        else{
+            return adjustOnMinus(final_day,day,day_other,offset);
+        }
+    })
+    .then(function(resss){
         return res.json({
           msg: "These are to results for ",
           data: resss
@@ -493,11 +565,29 @@ function fetchAppearances(txt,ress,rLastSeen, appear1, appear2,mLastSeen){
 }
 
 function getDayLess(last){
-    console.log(last);
+    // console.log(last);
     last = last.split("-");
     let new_last = new Date(last[0],last[1]-1,last[2]);
-    console.log(last);
+    // console.log(last);
     new_last.setDate(new_last.getDate() - 1);
+    let new_last_string = new_last.toLocaleDateString();
+    new_last_string = new_last_string.split('/');
+    new_last = new_last_string[0];
+    new_last_string[0] = new_last_string[2];
+    new_last_string[2] = new_last_string[1];
+    new_last_string[1] = new_last;
+    new_last_string = new_last_string.join('-');
+    new_last_string= new_last_string+"-23:00";
+    return new_last_string;
+
+}
+
+function getDayMore(last){
+    // console.log(last);
+    last = last.split("-");
+    let new_last = new Date(last[0],last[1]-1,last[2]);
+    // console.log(last);
+    new_last.setDate(new_last.getDate() + 1);
     let new_last_string = new_last.toLocaleDateString();
     new_last_string = new_last_string.split('/');
     new_last = new_last_string[0];
@@ -586,4 +676,186 @@ function retriveQuiz(obj,id,txt){
             return true;
         });
     }
+}
+
+function adjustOnPlus(final_day,day,day_other,offset){
+
+    for(let i = 0; i <= 23 - offset; i++){
+
+        if(day["NTtop"] != undefined &&
+        day["NTtop"][i+':00'] != undefined){
+
+            final_day["NTtop"][(i+offset)+':00'] = day["NTtop"][i+':00'];
+
+            for(let ii = 0; ii < day["NTtop"][i+':00'].length; ii++){
+                if(final_day["nt-list"][day["NTtop"][i+':00'][ii]] == undefined ||
+                final_day["nt-list"][day["NTtop"][i+':00'][ii]] == null){
+                    final_day["nt-list"][day["NTtop"][i+':00'][ii]] = day["nt-list"][day["NTtop"][i+':00'][ii]];
+                }
+            }
+        }
+
+        if(day["NTmid"] != undefined &&
+        day["NTmid"][i+':00'] != undefined){
+
+            final_day["NTmid"][(i+offset)+':00'] = day["NTmid"][i+':00'];
+
+            for(let ii = 0; ii < day["NTmid"][i+':00'].length; ii++){
+                if(final_day["nt-list"][day["NTmid"][i+':00'][ii]] == undefined ||
+                final_day["nt-list"][day["NTmid"][i+':00'][ii]] == null){
+                    final_day["nt-list"][day["NTmid"][i+':00'][ii]] = day["nt-list"][day["NTmid"][i+':00'][ii]];
+                }
+            }
+        }
+
+        if(day["wow"] != undefined &&
+        day["wow"][i+':00'] != undefined){
+
+            final_day["wow"][(i+offset)+':00'] = day["wow"][i+':00'];
+
+            for(let ii = 0; ii < day["wow"][i+':00'].length; ii++){
+                if(final_day["wow-list"][day["wow"][i+':00'][ii]] == undefined ||
+                final_day["wow-list"][day["wow"][i+':00'][ii]] == null){
+                    final_day["wow-list"][day["wow"][i+':00'][ii]] = day["wow-list"][day["wow"][i+':00'][ii]];
+                }
+            }
+        }
+
+    }
+
+    for(let i = 24 - offset; i <= 23; i++){
+
+        let offs = i+offset-24;
+        if(day_other["NTtop"] != undefined &&
+        day_other["NTtop"][i+':00'] != undefined){
+            final_day["NTtop"][(offs)+':00'] = day_other["NTtop"][i+':00'];
+
+            for(let ii = 0; ii < day_other["NTtop"][i+':00'].length; ii++){
+                if(final_day["nt-list"][day_other["NTtop"][i+':00'][ii]] == undefined ||
+                final_day["nt-list"][day_other["NTtop"][i+':00'][ii]] == null){
+                    final_day["nt-list"][day_other["NTtop"][i+':00'][ii]] = day_other["nt-list"][day_other["NTtop"][i+':00'][ii]];
+                }
+            }
+        }
+
+        if(day_other["NTmid"] != undefined &&
+        day_other["NTmid"][i+':00'] != undefined){
+
+            final_day["NTmid"][offs+':00'] = day_other["NTmid"][i+':00'];
+
+            for(let ii = 0; ii < day_other["NTmid"][i+':00'].length; ii++){
+                if(final_day["nt-list"][day_other["NTmid"][i+':00'][ii]] == undefined ||
+                final_day["nt-list"][day_other["NTmid"][i+':00'][ii]] == null){
+                    final_day["nt-list"][day_other["NTmid"][i+':00'][ii]] = day_other["nt-list"][day_other["NTmid"][i+':00'][ii]];
+                }
+            }
+        }
+
+        if(day_other["wow"] != undefined &&
+        day_other["wow"][i+':00'] != undefined){
+
+            final_day["wow"][offs+':00'] = day_other["wow"][i+':00'];
+
+            for(let ii = 0; ii < day_other["wow"][i+':00'].length; ii++){
+                if(final_day["wow-list"][day_other["wow"][i+':00'][ii]] == undefined ||
+                final_day["wow-list"][day_other["wow"][i+':00'][ii]] == null){
+                    final_day["wow-list"][day_other["wow"][i+':00'][ii]] = day_other["wow-list"][day_other["wow"][i+':00'][ii]];
+                }
+            }
+        }
+
+    }
+
+    return final_day;
+}
+
+function adjustOnMinus(final_day,day,day_other,offset){
+    offset = offset * -1;
+    for(let i = 0 + offset; i <= 23; i++){
+        // console.log(i);
+        if(day["NTtop"] != undefined &&
+        day["NTtop"][i+':00'] != undefined){
+
+            final_day["NTtop"][(i-offset)+':00'] = day["NTtop"][i+':00'];
+
+            for(let ii = 0; ii < day["NTtop"][i+':00'].length; ii++){
+                if(final_day["nt-list"][day["NTtop"][i+':00'][ii]] == undefined ||
+                final_day["nt-list"][day["NTtop"][i+':00'][ii]] == null){
+                    final_day["nt-list"][day["NTtop"][i+':00'][ii]] = day["nt-list"][day["NTtop"][i+':00'][ii]];
+                }
+            }
+        }
+
+        if(day["NTmid"] != undefined &&
+        day["NTmid"][i+':00'] != undefined){
+
+            final_day["NTmid"][(i-offset)+':00'] = day["NTmid"][i+':00'];
+
+            for(let ii = 0; ii < day["NTmid"][i+':00'].length; ii++){
+                if(final_day["nt-list"][day["NTmid"][i+':00'][ii]] == undefined ||
+                final_day["nt-list"][day["NTmid"][i+':00'][ii]] == null){
+                    final_day["nt-list"][day["NTmid"][i+':00'][ii]] = day["nt-list"][day["NTmid"][i+':00'][ii]];
+                }
+            }
+        }
+
+        if(day["wow"] != undefined &&
+        day["wow"][i+':00'] != undefined){
+
+            final_day["wow"][(i-offset)+':00'] = day["wow"][i+':00'];
+
+            for(let ii = 0; ii < day["wow"][i+':00'].length; ii++){
+                if(final_day["wow-list"][day["wow"][i+':00'][ii]] == undefined ||
+                final_day["wow-list"][day["wow"][i+':00'][ii]] == null){
+                    final_day["wow-list"][day["wow"][i+':00'][ii]] = day["wow-list"][day["wow"][i+':00'][ii]];
+                }
+            }
+        }
+
+    }
+    // console.log("switch");
+    for(let i = 0; i < offset; i++){
+        // console.log(i);
+        let offs = i-8+24;
+        if(day_other["NTtop"] != undefined &&
+        day_other["NTtop"][i+':00'] != undefined){
+            final_day["NTtop"][(offs)+':00'] = day_other["NTtop"][i+':00'];
+
+            for(let ii = 0; ii < day_other["NTtop"][i+':00'].length; ii++){
+                if(final_day["nt-list"][day_other["NTtop"][i+':00'][ii]] == undefined ||
+                final_day["nt-list"][day_other["NTtop"][i+':00'][ii]] == null){
+                    final_day["nt-list"][day_other["NTtop"][i+':00'][ii]] = day_other["nt-list"][day_other["NTtop"][i+':00'][ii]];
+                }
+            }
+        }
+
+        if(day_other["NTmid"] != undefined &&
+        day_other["NTmid"][i+':00'] != undefined){
+
+            final_day["NTmid"][offs+':00'] = day_other["NTmid"][i+':00'];
+
+            for(let ii = 0; ii < day_other["NTmid"][i+':00'].length; ii++){
+                if(final_day["nt-list"][day_other["NTmid"][i+':00'][ii]] == undefined ||
+                final_day["nt-list"][day_other["NTmid"][i+':00'][ii]] == null){
+                    final_day["nt-list"][day_other["NTmid"][i+':00'][ii]] = day_other["nt-list"][day_other["NTmid"][i+':00'][ii]];
+                }
+            }
+        }
+
+        if(day_other["wow"] != undefined &&
+        day_other["wow"][i+':00'] != undefined){
+
+            final_day["wow"][offs+':00'] = day_other["wow"][i+':00'];
+
+            for(let ii = 0; ii < day_other["wow"][i+':00'].length; ii++){
+                if(final_day["wow-list"][day_other["wow"][i+':00'][ii]] == undefined ||
+                final_day["wow-list"][day_other["wow"][i+':00'][ii]] == null){
+                    final_day["wow-list"][day_other["wow"][i+':00'][ii]] = day_other["wow-list"][day_other["wow"][i+':00'][ii]];
+                }
+            }
+        }
+
+    }
+
+    return final_day;
 }

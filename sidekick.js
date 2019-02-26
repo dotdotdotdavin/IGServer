@@ -17,29 +17,29 @@ client.on('error',function(err){
 
 
 
-function f(){
-
-    extra.smembersAsync("archive_id").then(function(res){
-        // console.log(res);
-        var tempList = [];
-
-
-        for(let i = 0; i < res.length; i++){
-            tempList.push(
-                func1(res[i])
-            );
-        }
-
-
-        return Promise.all(tempList).then(function(values){
-            console.log(values.length);
-            return values;
-        });
-    });
-
-}
-
-function func1(res){
+// function f(){
+//
+//     extra.smembersAsync("archive_id").then(function(res){
+//         // console.log(res);
+//         var tempList = [];
+//
+//
+//         for(let i = 0; i < res.length; i++){
+//             tempList.push(
+//                 func1(res[i])
+//             );
+//         }
+//
+//
+//         return Promise.all(tempList).then(function(values){
+//             console.log(values.length);
+//             return values;
+//         });
+//     });
+//
+// }
+//
+// function func1(res){
     // return extra.hgetAsync(res,"name").then(function(res1){
     //     if(res1){
     //         return extra.hgetallAsync(res1).then(function(res2){
@@ -62,7 +62,7 @@ function func1(res){
     //     }
     // });
 
-}
+// }
 
 // extra.delAsync("nt40161").then(function(ress){
 //     console.log(ress);
@@ -73,7 +73,7 @@ function func1(res){
 // https://en2.nametests.com/test/what-are-the-5-best-things-about-you/40128/?start=1#
 // extra.keysAsync("*").then(function(ress){
 //     for (let i = 0; i<ress.length; i++){
-//         if(ress[i].indexOf("trend >>>") == 0){
+//         if(ress[i].indexOf("nt >>>") == 0){
 //             console.log(ress[i]);
 //
 //             // extra.hgetallAsync(ress[i]).then(function(res){
@@ -94,11 +94,15 @@ function func1(res){
 
 // f();
 
-extra.hgetallAsync("trend >>> 2019-2-20").then(function(res){
+extra.hgetallAsync("trend >>> 2019-2-21").then(function(res){
     console.log(res);
 });
-
-
-extra.hgetallAsync("nt >>> 40287").then(function(res1){
-    console.log(res1);
-});
+//
+//
+//
+// // function
+//
+// extra.hgetallAsync("nt >>> 40223").then(function(res1){
+//     console.log(res1);
+//     console.log(res1["NT_mid_appearances"]);
+// });
