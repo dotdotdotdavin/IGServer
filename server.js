@@ -724,6 +724,52 @@ function fetchAppearances(txt,ress,rLastSeen, appear1, appear2,mLastSeen){
         }
     }
 
+    else if(txt == 'bam'){
+        if(appear1 <= 0){
+            // console.log("end");
+            return ress;
+        }
+        else{
+
+            rLastSeen = rLastSeen.split('-');
+            let rLastTime = rLastSeen.pop();
+            rLastTime = rLastTime.split(':');
+            rLastTime = parseInt(rLastTime[0]);
+            rLastSeen = rLastSeen.join('-');
+            return extra.hgetallAsync("trend >>> "+rLastSeen).then(function(res1){
+                var tempList = {date:rLastSeen,hours:[]};
+                for(let i = rLastTime; i >= 0; i--){
+                    if(res1[txt+" >>> "+i+":00"] != undefined){
+                        let timeList = res1[txt+" >>> "+i+":00"].split("|||");
+                        if(timeList.includes(ress.id)){
+                            tempList.hours.push(i)
+                            appear1--;
+                        }
+
+                        if(appear1 == 0){
+                            break;
+                        }
+                    }
+                }
+
+                return tempList;
+            }).then(function(tempList){
+                if(tempList.hours.length > 0){
+                    ress.appearList.bamAppear.push(tempList);
+                }
+                if(appear1 != 0){
+                    rLastSeen = getDayLess(rLastSeen);
+                    return fetchAppearances(txt,ress,rLastSeen,appear1,appear2,mLastSeen);
+                }
+                else{
+                    return ress;
+                }
+
+            });
+
+        }
+    }
+
     else{
         if(appear1 <= 0 && appear2 <= 0){
             // console.log("end");
