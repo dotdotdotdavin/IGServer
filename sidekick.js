@@ -73,7 +73,7 @@ client.on('error',function(err){
 // https://en2.nametests.com/test/what-are-the-5-best-things-about-you/40128/?start=1#
 // extra.keysAsync("*").then(function(ress){
 //     for (let i = 0; i<ress.length; i++){
-//         if(ress[i].indexOf("nt >>>") == 0){
+//         if(ress[i].indexOf("bam >>>") == 0){
 //             console.log(ress[i]);
 //
 //             // extra.hgetallAsync(ress[i]).then(function(res){
@@ -94,12 +94,13 @@ client.on('error',function(err){
 
 // f();
 
-extra.hgetAsync("trend >>> 2019-2-26","NTtop >>> 10:00"
+extra.hgetAsync("trend >>> 2019-2-27"
+,"bam >>> 9:00"
 // ,'40588|||40599|||40614|||40616|||40598'
 ).then(function(res){
     console.log(res);
 });
-//
+
 //
 //
 // // function
