@@ -325,6 +325,8 @@ app.get('/getdate',(req,res) => {
 app.get('/getappearances', (req,res) => {
     var new_id = req.query.id+"";
     var new_txt = req.query.txt;
+    var get_off = parseInt(req.query.offset) / -60;
+
 
     var obj_appear = [];
     extra.hgetallAsync(new_txt+" >>> "+new_id).then(function(resss){
@@ -334,11 +336,24 @@ app.get('/getappearances', (req,res) => {
             "NT-top-Appear":[],
             "NT-mid-Appear":[]}
             if(new_txt == "wow"){
-                return fetchAppearances(new_txt,resss,resss.last_seen,resss.reco_appearances,0,"");
+                return fetchAppearances(new_txt,resss,resss.last_seen,resss.reco_appearances,0,"").then(function(res1){
+                    if(get_off >= 0){
+                        return adjustAppearancePlus(resss,get_off,new_txt);
+                    }
+
+                });
             }
             else{
                 console.log(resss);
-                return fetchAppearances(new_txt,resss,resss['NT_top_last_seen'],parseInt(resss["NT_top_appearances"]),parseInt(resss["NT_mid_appearances"]),resss['NT_mid_last_seen']);
+                return fetchAppearances(new_txt,resss,resss['NT_top_last_seen'],
+                        parseInt(resss["NT_top_appearances"]),
+                        parseInt(resss["NT_mid_appearances"]),
+                        resss['NT_mid_last_seen']).then(function(res1){
+                            if(get_off >= 0){
+                                return adjustAppearancePlus(resss,get_off,new_txt);
+                            }
+
+                        });
             }
         }
         else{
@@ -436,6 +451,155 @@ app.listen(port, '0.0.0.0', function() {
 
 
 console.log('todo list RESTful API server started on: ' + port);
+
+function adjustAppearancePlus(res,off,txt){
+
+    var tempAppear = [];
+    var tempDateAppear = [];
+    var tempDateHour = null;
+    var off_hour = 0;
+    var new_date = "";
+
+    if(txt == "wow"){
+        // console.log(res.appearList.wowAppear);
+
+        tempAppear = [];
+        tempDateAppear = [];
+        tempDateHour = null;
+        off_hour = 0;
+        new_date = "";
+
+        for(let i = 0; i < res.appearList.wowAppear.length; i++){
+
+            tempDateHour = res.appearList.wowAppear[i];
+
+            for(let ii = 0; ii < tempDateHour.hours.length; ii++){
+
+                off_hour = tempDateHour.hours[ii] + off;
+
+                if(off_hour >= 24){
+                    new_date = getDayMore(tempDateHour.date);
+                    new_date = new_date.split("-");
+                    new_date.pop();
+                    new_date = new_date.join("-");
+                    off_hour = off_hour-24;
+                }
+
+                else{
+                    new_date = tempDateHour.date;
+                }
+
+                if(tempAppear[tempAppear.length -1] == undefined ||
+                    tempAppear[tempAppear.length -1].date != new_date){
+                        tempAppear.push({
+                            "date":new_date,
+                            "hours":[off_hour]
+                        });
+                    }
+
+                else if (tempAppear[tempAppear.length -1].date == new_date) {
+                    tempAppear[tempAppear.length -1].hours.push(off_hour);
+                }
+
+
+            }
+        }
+        // console.log("AAAAAAA");
+        // console.log(tempAppear);
+
+        res.appearList.wowAppear = tempAppear;
+
+    }
+
+    else{
+        tempAppear = [];
+        tempDateAppear = [];
+        tempDateHour = null;
+        off_hour = 0;
+        new_date = "";
+        for(let i = 0; i < res.appearList["NT-top-Appear"].length; i++){
+
+            tempDateHour = res.appearList["NT-top-Appear"][i];
+
+            for(let ii = 0; ii < tempDateHour.hours.length; ii++){
+
+                off_hour = tempDateHour.hours[ii] + off;
+
+                if(off_hour >= 24){
+                    new_date = getDayMore(tempDateHour.date);
+                    new_date = new_date.split("-");
+                    new_date.pop();
+                    new_date = new_date.join("-");
+                    off_hour = off_hour-24;
+                }
+
+                else{
+                    new_date = tempDateHour.date;
+                }
+
+                if(tempAppear[tempAppear.length -1] == undefined ||
+                    tempAppear[tempAppear.length -1].date != new_date){
+                        tempAppear.push({
+                            "date":new_date,
+                            "hours":[off_hour]
+                        });
+                    }
+
+                else if (tempAppear[tempAppear.length -1].date == new_date) {
+                    tempAppear[tempAppear.length -1].hours.push(off_hour);
+                }
+
+
+            }
+        }
+        res.appearList["NT-top-Appear"] = tempAppear;
+
+        tempAppear = [];
+        tempDateAppear = [];
+        tempDateHour = null;
+        off_hour = 0;
+        new_date = "";
+        for(let i = 0; i < res.appearList["NT-mid-Appear"].length; i++){
+
+            tempDateHour = res.appearList["NT-mid-Appear"][i];
+
+            for(let ii = 0; ii < tempDateHour.hours.length; ii++){
+
+                off_hour = tempDateHour.hours[ii] + off;
+
+                if(off_hour >= 24){
+                    new_date = getDayMore(tempDateHour.date);
+                    new_date = new_date.split("-");
+                    new_date.pop();
+                    new_date = new_date.join("-");
+                    off_hour = off_hour-24;
+                }
+
+                else{
+                    new_date = tempDateHour.date;
+                }
+
+                if(tempAppear[tempAppear.length -1] == undefined ||
+                    tempAppear[tempAppear.length -1].date != new_date){
+                        tempAppear.push({
+                            "date":new_date,
+                            "hours":[off_hour]
+                        });
+                    }
+
+                else if (tempAppear[tempAppear.length -1].date == new_date) {
+                    tempAppear[tempAppear.length -1].hours.push(off_hour);
+                }
+
+
+            }
+        }
+        res.appearList["NT-mid-Appear"] = tempAppear;
+
+    }
+
+    return res;
+}
 
 function fetchAppearances(txt,ress,rLastSeen, appear1, appear2,mLastSeen){
 
