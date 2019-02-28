@@ -124,7 +124,7 @@ app.get('/getgame', (req, res) => {
     let name = req.query.name;
     let days = req.query.days;
     let id = req.query.id;
-    // console.log("here");
+
     days = parseInt(days);
     if(id && name){
         let ex = extra.existsAsync(id).then(function(res1){
@@ -219,7 +219,7 @@ app.get('/getdate',(req,res) => {
         'bam-list':{}
     };
     return extra.hgetallAsync("trend >>> "+date).then(function(res1){
-        // console.log(res1);
+
         if(res1){
             var obj = { 'NTtop':{},
                 'NTmid': {},
@@ -325,7 +325,7 @@ app.get('/getdate',(req,res) => {
         }
     })
     .then(function(resss){
-        console.log(resss.bam);
+
         return res.json({
           msg: "These are to results for ",
           data: resss
