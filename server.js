@@ -214,7 +214,9 @@ app.get('/getdate',(req,res) => {
         'NTmid': {},
         'wow': {},
         'wow-list':{},
-        'nt-list':{}
+        'nt-list':{},
+        'bam':{},
+        'bam-list':{}
     };
     return extra.hgetallAsync("trend >>> "+date).then(function(res1){
         // console.log(res1);
@@ -223,7 +225,9 @@ app.get('/getdate',(req,res) => {
                 'NTmid': {},
                 'wow': {},
                 'wow-list':{},
-                'nt-list':{}
+                'nt-list':{},
+                'bam':{},
+                'bam-list':{}
             };
 
             var promise_list = [];
@@ -233,10 +237,12 @@ app.get('/getdate',(req,res) => {
                 let ia = makeQuizList(obj,i,'NTtop',res1);
                 let ib = makeQuizList(obj,i,'NTmid',res1);
                 let ic = makeQuizList(obj,i,'wow',res1);
+                let id = makeQuizList(obj,i,'bam',res1);
 
                 promise_list.push(ia);
                 promise_list.push(ib);
                 promise_list.push(ic);
+                promise_list.push(id);
 
 
             }
@@ -275,7 +281,9 @@ app.get('/getdate',(req,res) => {
                    'NTmid': {},
                    'wow': {},
                    'wow-list':{},
-                   'nt-list':{}
+                   'nt-list':{},
+                   'bam':{},
+                   'bam-list':{}
                };
 
                var promise_list = [];
@@ -285,10 +293,12 @@ app.get('/getdate',(req,res) => {
                    let ia = makeQuizList(obj,i,'NTtop',res1);
                    let ib = makeQuizList(obj,i,'NTmid',res1);
                    let ic = makeQuizList(obj,i,'wow',res1);
+                   let id = makeQuizList(obj,i,'bam',res1);
 
                    promise_list.push(ia);
                    promise_list.push(ib);
                    promise_list.push(ic);
+                   promise_list.push(id);
 
 
                }
@@ -315,6 +325,7 @@ app.get('/getdate',(req,res) => {
         }
     })
     .then(function(resss){
+        console.log(resss.bam);
         return res.json({
           msg: "These are to results for ",
           data: resss
@@ -334,7 +345,9 @@ app.get('/getappearances', (req,res) => {
 
             resss.appearList = {"wowAppear":[],
             "NT-top-Appear":[],
-            "NT-mid-Appear":[]}
+            "NT-mid-Appear":[],
+            "bamAppear":[]}
+            console.log(resss);
             if(new_txt == "wow"){
                 return fetchAppearances(new_txt,resss,resss.last_seen,resss.reco_appearances,0,"").then(function(res1){
                     if(get_off >= 0){
@@ -343,8 +356,17 @@ app.get('/getappearances', (req,res) => {
 
                 });
             }
+            else if(new_txt == "bam"){
+                // console.log(resss);
+                return fetchAppearances(new_txt,resss,resss.last_seen,resss.reco_appearances,0,"").then(function(res1){
+                    if(get_off >= 0){
+                        return adjustAppearancePlus(resss,get_off,new_txt);
+                    }
+
+                });
+            }
             else{
-                console.log(resss);
+                // console.log(resss);
                 return fetchAppearances(new_txt,resss,resss['NT_top_last_seen'],
                         parseInt(resss["NT_top_appearances"]),
                         parseInt(resss["NT_mid_appearances"]),
@@ -510,6 +532,59 @@ function adjustAppearancePlus(res,off,txt){
         res.appearList.wowAppear = tempAppear;
 
     }
+
+    else if(txt == "bam"){
+        // console.log(res.appearList.wowAppear);
+
+        tempAppear = [];
+        tempDateAppear = [];
+        tempDateHour = null;
+        off_hour = 0;
+        new_date = "";
+
+        for(let i = 0; i < res.appearList.bamAppear.length; i++){
+
+            tempDateHour = res.appearList.bamAppear[i];
+
+            for(let ii = 0; ii < tempDateHour.hours.length; ii++){
+
+                off_hour = tempDateHour.hours[ii] + off;
+
+                if(off_hour >= 24){
+                    new_date = getDayMore(tempDateHour.date);
+                    new_date = new_date.split("-");
+                    new_date.pop();
+                    new_date = new_date.join("-");
+                    off_hour = off_hour-24;
+                }
+
+                else{
+                    new_date = tempDateHour.date;
+                }
+
+                if(tempAppear[tempAppear.length -1] == undefined ||
+                    tempAppear[tempAppear.length -1].date != new_date){
+                        tempAppear.push({
+                            "date":new_date,
+                            "hours":[off_hour]
+                        });
+                    }
+
+                else if (tempAppear[tempAppear.length -1].date == new_date) {
+                    tempAppear[tempAppear.length -1].hours.push(off_hour);
+                }
+
+
+            }
+        }
+        // console.log("AAAAAAA");
+        // console.log(tempAppear);
+
+        res.appearList.bamAppear = tempAppear;
+
+    }
+
+
 
     else{
         tempAppear = [];
@@ -814,10 +889,19 @@ function getDates(name,fdate,many){
 function makeQuizList(obj,index,txt,res1){
     let iHour = index+':00';
     var promise_list = [];
+
+
     if(res1[txt+" >>> "+iHour]){
         obj[txt][iHour]=res1[txt+" >>> "+iHour].split('|||');
         for(let i = 0; i < obj[txt][iHour].length; i++){
-            let new_txt = txt == 'wow' ? "wow" : "nt"
+
+            if(txt == "NTmid" || txt == "NTtop"){
+                new_txt = "nt";
+            }
+            else{
+                new_txt = txt;
+            }
+
             let a = retriveQuiz(obj,obj[txt][iHour][i],new_txt);
 
             promise_list.push(a);
@@ -835,7 +919,11 @@ function makeQuizList(obj,index,txt,res1){
 
 function retriveQuiz(obj,id,txt){
     if(!obj[txt+'-list'][id]){
+
         return extra.hgetallAsync(txt+' >>> '+id).then(function(res){
+            if(txt == "bam"){
+                // console.log(res);
+            }
             obj[txt+'-list'][id] = res;
             return true;
         });
@@ -885,6 +973,19 @@ function adjustOnPlus(final_day,day,day_other,offset){
             }
         }
 
+        if(day["bam"] != undefined &&
+        day["bam"][i+':00'] != undefined){
+
+            final_day["bam"][(i+offset)+':00'] = day["bam"][i+':00'];
+
+            for(let ii = 0; ii < day["bam"][i+':00'].length; ii++){
+                if(final_day["bam-list"][day["bam"][i+':00'][ii]] == undefined ||
+                final_day["bam-list"][day["bam"][i+':00'][ii]] == null){
+                    final_day["bam-list"][day["bam"][i+':00'][ii]] = day["bam-list"][day["bam"][i+':00'][ii]];
+                }
+            }
+        }
+
     }
 
     for(let i = 24 - offset; i <= 23; i++){
@@ -924,6 +1025,19 @@ function adjustOnPlus(final_day,day,day_other,offset){
                 if(final_day["wow-list"][day_other["wow"][i+':00'][ii]] == undefined ||
                 final_day["wow-list"][day_other["wow"][i+':00'][ii]] == null){
                     final_day["wow-list"][day_other["wow"][i+':00'][ii]] = day_other["wow-list"][day_other["wow"][i+':00'][ii]];
+                }
+            }
+        }
+
+        if(day_other["bam"] != undefined &&
+        day_other["bam"][i+':00'] != undefined){
+
+            final_day["bam"][offs+':00'] = day_other["bam"][i+':00'];
+
+            for(let ii = 0; ii < day_other["bam"][i+':00'].length; ii++){
+                if(final_day["bam-list"][day_other["bam"][i+':00'][ii]] == undefined ||
+                final_day["bam-list"][day_other["bam"][i+':00'][ii]] == null){
+                    final_day["bam-list"][day_other["bam"][i+':00'][ii]] = day_other["bam-list"][day_other["bam"][i+':00'][ii]];
                 }
             }
         }
