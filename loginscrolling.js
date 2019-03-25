@@ -1,7 +1,7 @@
 
 // Standard values, visit page etc;
 
-const login_page_fb = 'https://facebook.com/login/';
+const login_page_fb = 'https://facebook.com/';
 const page_fb = 'https://facebook.com/';
 const instant_games_fb = 'https://facebook.com/instantgames/';``
 
